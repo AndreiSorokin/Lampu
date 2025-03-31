@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
-import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
+import { User, UserRole } from './user.entity';
 import { CreateUserDto } from './user.dto';
 
 @Injectable()
@@ -15,11 +16,17 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async createUser(userData: CreateUserDto): Promise<User> {
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const newUser = this.usersRepository.create(userData);
-      return await this.usersRepository.save(newUser);
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      const user = this.usersRepository.create({
+        ...createUserDto,
+        password: hashedPassword,
+        role: createUserDto.role || UserRole.USER,
+      });
+      return await this.usersRepository.save(user);
     } catch (error) {
+      console.log('Error: ', error)
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as { code: string };
         if (driverError && driverError.code === '23505') {
