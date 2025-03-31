@@ -1,18 +1,34 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
+import { CreateUserDto } from './user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post()
+  async createUser(@Body() userData: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(userData);
+  }
+
   @Get()
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  async findAll(): Promise<User[] | { message: string }> {
+    const users = await this.usersService.findAll();
+    if (users.length === 0) {
+      return { message: 'No users found' };
+    }
+    return users;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<User | null> {
-    return this.usersService.findOne(+id);
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<User | null | { message: string }> {
+    const user = await this.usersService.findOne(+id);
+    if (user === null) {
+      return { message: 'User not found' };
+    }
+    return user;
   }
 }

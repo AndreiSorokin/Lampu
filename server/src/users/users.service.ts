@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { User } from './user.entity';
+import { CreateUserDto } from './user.dto';
 
 @Injectable()
 export class UsersService {
@@ -9,6 +14,21 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
+  async createUser(userData: CreateUserDto): Promise<User> {
+    try {
+      const newUser = this.usersRepository.create(userData);
+      return await this.usersRepository.save(newUser);
+    } catch (error) {
+      if (error instanceof QueryFailedError) {
+        const driverError = error.driverError as { code: string };
+        if (driverError && driverError.code === '23505') {
+          throw new BadRequestException('Email already exists');
+        }
+      }
+      throw new InternalServerErrorException('Failed to create user');
+    }
+  }
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
