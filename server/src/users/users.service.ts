@@ -6,7 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User, UserRole } from './user.entity';
+import { User } from './user.entity';
+import { UserRole } from './user-role.enum';
 import { CreateUserDto } from './user.dto';
 
 @Injectable()
@@ -23,10 +24,10 @@ export class UsersService {
         ...createUserDto,
         password: hashedPassword,
         role: createUserDto.role || UserRole.USER,
+        cart: [],
       });
       return await this.usersRepository.save(user);
     } catch (error) {
-      console.log('Error: ', error)
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as { code: string };
         if (driverError && driverError.code === '23505') {

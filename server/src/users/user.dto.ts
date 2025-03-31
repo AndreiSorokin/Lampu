@@ -1,5 +1,5 @@
 // src/users/user.dto.ts
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import {
   IsString,
   IsNotEmpty,
@@ -9,13 +9,13 @@ import {
   IsOptional,
   Validate,
 } from 'class-validator';
-import { UserRole } from './user.entity';
+import { UserRole } from '../users/user-role.enum';
 import { IsPastDateConstraint } from './validators/is-past-date.validator';
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty({ message: 'Email is required' })
-  @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
+  @Matches(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, {
     message: 'Email must match a valid format',
   })
   email!: string;
@@ -24,7 +24,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Password is required' })
   @MinLength(8, { message: 'Password must be at least 8 characters' })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
-    message: 'Password must contain lowercase and uppercase letters and numbers',
+    message:
+      'Password must contain lowercase and uppercase letters and numbers',
   })
   password!: string;
 

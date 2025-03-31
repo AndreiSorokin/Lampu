@@ -14,7 +14,7 @@
     "jest": true
   },
   "rules": {
-  "prettier/prettier": ["error", { "endOfLine": "crlf" }],
-  "@typescript-eslint/no-unsafe-call": "off"
+    "prettier/prettier": ["error", { "endOfLine": "crlf" }],
+    "@typescript-eslint/no-unsafe-call": "off"
   }
 }

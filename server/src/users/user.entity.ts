@@ -1,10 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
-export enum UserRole {
-  USER = 'user',
-  MEMBERS = 'member',
-  ADMIN = 'admin',
-}
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Event } from '../events/event.entity';
+import { UserRole } from './user-role.enum';
 
 @Entity()
 export class User {
@@ -21,10 +23,7 @@ export class User {
   name?: string;
 
   @Column({ type: 'date', nullable: true })
-  dateOfBirth?: string;
-
-  @Column({ type: 'json', nullable: true })
-  cart?: any;
+  dateOfBirth?: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role!: UserRole;
@@ -34,4 +33,8 @@ export class User {
 
   @Column({ nullable: true })
   telegram?: string;
+
+  @ManyToMany(() => Event, (event) => event.enrolledUsers, { cascade: true })
+  @JoinTable()
+  cart!: Event[];
 }
