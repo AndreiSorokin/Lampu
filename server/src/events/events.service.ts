@@ -3,9 +3,12 @@ import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, QueryFailedError } from 'typeorm';
+import { Repository, QueryFailedError, LessThan } from 'typeorm';
+import { Cron, CronExpression } from '@nestjs/schedule';
+
 import { Event } from './event.entity';
 import { User } from '../users/user.entity';
 import { CreateEventDto } from './event.dto';
@@ -13,6 +16,8 @@ import { UpdateEventDto } from './update-event.dto';
 
 @Injectable()
 export class EventsService {
+  private readonly logger: Logger = new Logger(EventsService.name);
+
   constructor(
     @InjectRepository(Event)
     private eventsRepository: Repository<Event>,
@@ -55,16 +60,17 @@ export class EventsService {
 
   async createEvent(createEventDto: CreateEventDto): Promise<Event> {
     try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const eventDate = new Date(createEventDto.date);
+
+      if (eventDate < today) {
+        throw new BadRequestException('Event date cannot be in the past');
+      }
+
       const event = this.eventsRepository.create(createEventDto);
       return await this.eventsRepository.save(event);
-    } catch (error) {
-      console.log('Error: ', error);
-      if (error instanceof QueryFailedError) {
-        const driverError = error.driverError as { code: string };
-        if (driverError && driverError.code === '23505') {
-          throw new BadRequestException('Email already exists');
-        }
-      }
+    } catch {
       throw new InternalServerErrorException('Failed to create event');
     }
   }
@@ -126,5 +132,33 @@ export class EventsService {
       }
       throw new InternalServerErrorException('Failed to retrieve cart');
     }
+  }
+
+  async deleteExpiredEvents(): Promise<void> {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+
+      const expiredEvents = await this.eventsRepository.find({
+        where: { date: LessThan(today) },
+      });
+
+      if (expiredEvents.length > 0) {
+        await this.eventsRepository.remove(expiredEvents);
+        this.logger.log(`Deleted ${expiredEvents.length} expired events`);
+      } else {
+        this.logger.log('No expired events found');
+      }
+    } catch {
+      this.logger.error('Failed to delete expired events');
+      throw new InternalServerErrorException('Failed to delete expired events');
+    }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  handleExpiredEvents() {
+    this.deleteExpiredEvents();
   }
 }

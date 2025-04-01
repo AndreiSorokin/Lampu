@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
@@ -26,6 +27,7 @@ import { Event } from './events/event.entity';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     UsersModule,
     EventsModule,
   ],
