@@ -5,17 +5,44 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
 import { CreateEventDto } from './event.dto';
+import { UpdateEventDto } from './update-event.dto';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get()
-  async 
+  async getAllEvents(): Promise<Event[] | { message: string }> {
+    const events = await this.eventsService.getAllEvents();
+    if (events.length === 0) {
+      return { message: 'No events found' };
+    }
+    return events;
+  }
+
+  @Get(':id')
+  async getSingleEvent(
+    @Param('id') id: string,
+  ): Promise<Event | { message: string }> {
+    const event = await this.eventsService.gitSingleEvent(+id);
+    if (!event) {
+      return { message: 'Event not found' };
+    }
+    return event;
+  }
+
+  @Put(':id')
+  async updateEvent(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEventDto: UpdateEventDto,
+  ): Promise<Event> {
+    return this.eventsService.updateEvent(id, updateEventDto);
+  }
 
   @Post()
   async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {

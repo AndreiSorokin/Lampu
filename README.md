@@ -1,5 +1,6 @@
 # Lampu
 
+delete passed events
 Schedule
 Auth
 Google auth

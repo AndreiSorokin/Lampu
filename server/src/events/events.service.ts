@@ -2,12 +2,14 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError } from 'typeorm';
 import { Event } from './event.entity';
 import { User } from '../users/user.entity';
 import { CreateEventDto } from './event.dto';
+import { UpdateEventDto } from './update-event.dto';
 
 @Injectable()
 export class EventsService {
@@ -18,12 +20,45 @@ export class EventsService {
     private usersRepository: Repository<User>,
   ) {}
 
+  async getAllEvents(): Promise<Event[]> {
+    return this.eventsRepository.find();
+  }
+
+  async gitSingleEvent(id: number): Promise<Event | null> {
+    return this.eventsRepository.findOneBy({ id });
+  }
+
+  async updateEvent(
+    id: number,
+    updateEventDto: UpdateEventDto,
+  ): Promise<Event> {
+    try {
+      const event = await this.eventsRepository.findOne({ where: { id } });
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+      Object.assign(event, updateEventDto);
+      return await this.eventsRepository.save(event);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      if (error instanceof QueryFailedError) {
+        const driverError = error.driverError as { code: string };
+        if (driverError && driverError.code === '23505') {
+          throw new BadRequestException('Email already exists');
+        }
+      }
+      throw new InternalServerErrorException('Failed to create user');
+    }
+  }
+
   async createEvent(createEventDto: CreateEventDto): Promise<Event> {
     try {
       const event = this.eventsRepository.create(createEventDto);
       return await this.eventsRepository.save(event);
     } catch (error) {
-      console.log('Error: ', error)
+      console.log('Error: ', error);
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as { code: string };
         if (driverError && driverError.code === '23505') {
