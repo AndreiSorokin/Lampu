@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Put,
+  UploadedFile,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
@@ -29,7 +30,7 @@ export class EventsController {
   async getSingleEvent(
     @Param('id') id: string,
   ): Promise<Event | { message: string }> {
-    const event = await this.eventsService.gitSingleEvent(+id);
+    const event = await this.eventsService.getSingleEvent(+id);
     if (!event) {
       return { message: 'Event not found' };
     }
@@ -45,8 +46,13 @@ export class EventsController {
   }
 
   @Post()
-  async createEvent(@Body() createEventDto: CreateEventDto): Promise<Event> {
-    return this.eventsService.createEvent(createEventDto);
+  async createEvent(
+    @Body() createEventDto: CreateEventDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ): Promise<Event> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+    const imageBuffer: Buffer | undefined = file ? file.buffer : undefined;
+    return this.eventsService.createEvent(createEventDto, imageBuffer);
   }
 
   @Post('cart/add')

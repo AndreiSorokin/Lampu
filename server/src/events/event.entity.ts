@@ -28,7 +28,7 @@ export class Event {
   capacity!: number;
 
   @Column({ nullable: true })
-  image?: string;
+  imageUrl?: string;
 
   @ManyToMany(() => User, (user) => user.cart, { onDelete: 'CASCADE' })
   enrolledUsers!: User[];

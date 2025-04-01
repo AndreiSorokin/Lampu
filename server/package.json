@@ -15,12 +15,13 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.779.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/platform-express": "^11.0.12",
     "@nestjs/schedule": "^5.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "bcrypt": "^5.1.1",
@@ -45,6 +46,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cron": "^2.4.3",
     "@types/express": "^5.0.0",
+    "@types/multer": "^1.4.12",
     "@types/node": "^22.10.7",
     "@types/pg": "^8.11.11",
     "@types/supertest": "^6.0.2",

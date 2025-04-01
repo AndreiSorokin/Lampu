@@ -40,8 +40,4 @@ export class CreateEventDto {
   @IsNotEmpty({ message: 'Capacity is required' })
   @Min(1, { message: 'Capacity must be at least 1' })
   capacity!: number;
-
-  @IsString()
-  @IsOptional()
-  image?: string;
 }

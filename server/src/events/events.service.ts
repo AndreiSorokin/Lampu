@@ -8,6 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 
 import { Event } from './event.entity';
 import { User } from '../users/user.entity';
@@ -17,19 +22,38 @@ import { UpdateEventDto } from './update-event.dto';
 @Injectable()
 export class EventsService {
   private readonly logger: Logger = new Logger(EventsService.name);
+  private readonly s3Client: S3Client;
 
   constructor(
     @InjectRepository(Event)
     private eventsRepository: Repository<Event>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) {
+    const region = process.env.AWS_REGION;
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+    if (!region || !accessKeyId || !secretAccessKey) {
+      throw new Error(
+        'AWS credentials or region not configured in environment variables',
+      );
+    }
+
+    this.s3Client = new S3Client({
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    });
+  }
 
   async getAllEvents(): Promise<Event[]> {
     return this.eventsRepository.find();
   }
 
-  async gitSingleEvent(id: number): Promise<Event | null> {
+  async getSingleEvent(id: number): Promise<Event | null> {
     return this.eventsRepository.findOneBy({ id });
   }
 
@@ -58,7 +82,10 @@ export class EventsService {
     }
   }
 
-  async createEvent(createEventDto: CreateEventDto): Promise<Event> {
+  async createEvent(
+    createEventDto: CreateEventDto,
+    imageBuffer?: Buffer,
+  ): Promise<Event> {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -69,7 +96,22 @@ export class EventsService {
       }
 
       const event = this.eventsRepository.create(createEventDto);
-      return await this.eventsRepository.save(event);
+      const savedEvent = await this.eventsRepository.save(event);
+
+      if (imageBuffer) {
+        const key = `events/${savedEvent.id}/image.jpg`;
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: key,
+            Body: imageBuffer,
+            ContentType: 'image/jpeg',
+          }),
+        );
+        savedEvent.imageUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        await this.eventsRepository.save(savedEvent);
+      }
+      return savedEvent;
     } catch {
       throw new InternalServerErrorException('Failed to create event');
     }
@@ -138,14 +180,23 @@ export class EventsService {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
 
       const expiredEvents = await this.eventsRepository.find({
         where: { date: LessThan(today) },
       });
 
       if (expiredEvents.length > 0) {
+        for (const event of expiredEvents) {
+          if (event.imageUrl) {
+            const key = `events/${event.id}/image.jpg`;
+            await this.s3Client.send(
+              new DeleteObjectCommand({
+                Bucket: process.env.AWS_S3_BUCKET,
+                Key: key,
+              }),
+            );
+          }
+        }
         await this.eventsRepository.remove(expiredEvents);
         this.logger.log(`Deleted ${expiredEvents.length} expired events`);
       } else {
