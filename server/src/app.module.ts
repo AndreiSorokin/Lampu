@@ -7,11 +7,13 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
 import { EventsModule } from './events/events.module';
 import { Event } from './events/event.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -30,6 +32,7 @@ import { Event } from './events/event.entity';
     ScheduleModule.forRoot(),
     UsersModule,
     EventsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
