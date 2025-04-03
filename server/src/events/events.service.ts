@@ -209,7 +209,12 @@ export class EventsService {
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  handleExpiredEvents() {
-    this.deleteExpiredEvents();
+  async handleExpiredEvents() {
+    try {
+      await this.deleteExpiredEvents();
+      this.logger.log('Successfully handled expired events');
+    } catch {
+      this.logger.error('Error in handleExpiredEvents');
+    }
   }
 }

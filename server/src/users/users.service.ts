@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -16,6 +17,29 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+
+  async updatePassword(
+    user: User,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<User> {
+    try {
+      const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+      console.log('Password comparison result:', isPasswordValid);
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Old password is incorrect');
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      return await this.usersRepository.save(user);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update password');
+    }
+  }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
@@ -46,10 +70,13 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  findOne(id: number): Promise<User | null> {
-    return this.usersRepository.findOne({
+  async findOne(id: number): Promise<User | null> {
+    const user = await this.usersRepository.findOne({
       where: { id },
       relations: ['cart'],
+      select: ['id', 'email', 'password', 'role', 'name'],
     });
+    console.log('User found in findOne:', user); 
+    return user;
   }
 }

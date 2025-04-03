@@ -1,8 +1,7 @@
 # Lampu
 
-Fix auth
-Private endpoints
+Update password
 Forgot password
 Reset password
-Update password
+Private endpoints
 link AWS
