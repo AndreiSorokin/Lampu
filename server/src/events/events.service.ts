@@ -167,6 +167,35 @@ export class EventsService {
     }
   }
 
+  async removeFromCart(user: User, eventId: string): Promise<User> {
+    try {
+      const freshUser = await this.usersRepository.findOne({
+        where: { id: user.id },
+        relations: ['cart'],
+      });
+      const event = await this.eventsRepository.findOne({
+        where: { id: eventId },
+      });
+      if (!freshUser || !event) {
+        throw new BadRequestException('User or Event not found');
+      }
+      freshUser.cart = freshUser?.cart.filter((e) => e.id !== eventId) || [];
+      return await this.usersRepository.save(freshUser);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException(
+          'Failed to update cart due to database error',
+        );
+      }
+      throw new InternalServerErrorException(
+        'Failed to remove event from cart',
+      );
+    }
+  }
+
   async getCart(user: User): Promise<Event[]> {
     try {
       const freshUser = await this.usersRepository.findOne({

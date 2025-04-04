@@ -4,10 +4,10 @@ import {
   Get,
   Body,
   Param,
-  ParseIntPipe,
   Put,
   UploadedFile,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
@@ -31,6 +31,15 @@ export class EventsController {
     @CurrentUser() user: User,
   ): Promise<User> {
     return this.eventsService.addToCart(user, eventId);
+  }
+
+  @Delete(':eventId/remove-from-cart')
+  @UseGuards(AuthGuard('jwt'))
+  async removeFromCart(
+    @Param('eventId') eventId: string,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return await this.eventsService.removeFromCart(user, eventId);
   }
 
   @Get('cart')
