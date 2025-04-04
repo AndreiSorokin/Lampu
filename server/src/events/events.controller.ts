@@ -16,6 +16,9 @@ import { UpdateEventDto } from './update-event.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../users/current-user.decorator';
 import { User } from '../users/user.entity';
+import { RolesGuard } from '../users/roles.guard';
+import { Roles } from '../users/roles.decorator';
+import { UserRole } from '../users/user-role.enum';
 
 @Controller('events')
 export class EventsController {
@@ -54,6 +57,9 @@ export class EventsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  // @UseInterceptors(FileInterceptor('file'))
   async createEvent(
     @Body() createEventDto: CreateEventDto,
     @UploadedFile() file?: Express.Multer.File,
