@@ -76,7 +76,7 @@ export class UsersService {
       relations: ['cart'],
       select: ['id', 'email', 'password', 'role', 'name'],
     });
-    console.log('User found in findOne:', user); 
+    console.log('User found in findOne:', user);
     return user;
   }
 }

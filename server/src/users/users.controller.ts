@@ -28,9 +28,9 @@ export class UsersController {
   ) {
     try {
       const fullUser = await this.usersService.findOne(user.id);
-if (!fullUser) {
-  throw new NotFoundException('User not found');
-}
+      if (!fullUser) {
+        throw new NotFoundException('User not found');
+      }
       return await this.usersService.updatePassword(
         fullUser,
         updatePasswordDto.oldPassword,

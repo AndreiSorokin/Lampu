@@ -1,7 +1,6 @@
 # Lampu
 
-Update password
 Forgot password
 Reset password
-Private endpoints
+Assign member
 link AWS

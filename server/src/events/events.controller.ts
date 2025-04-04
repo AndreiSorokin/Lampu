@@ -7,15 +7,35 @@ import {
   ParseIntPipe,
   Put,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
 import { CreateEventDto } from './event.dto';
 import { UpdateEventDto } from './update-event.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { CurrentUser } from '../users/current-user.decorator';
+import { User } from '../users/user.entity';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
+
+  @Post(':eventId/add-to-cart')
+  @UseGuards(AuthGuard('jwt'))
+  async addToCart(
+    @Param('eventId', ParseIntPipe) eventId: number,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.eventsService.addToCart(user, eventId);
+  }
+
+  @Get('cart')
+  @UseGuards(AuthGuard('jwt'))
+  async getCart(@CurrentUser() user: User): Promise<Event[]> {
+    console.log('User in controller:', user);
+    return this.eventsService.getCart(user);
+  }
 
   @Get()
   async getAllEvents(): Promise<Event[] | { message: string }> {
@@ -28,21 +48,9 @@ export class EventsController {
 
   @Get(':id')
   async getSingleEvent(
-    @Param('id') id: string,
-  ): Promise<Event | { message: string }> {
-    const event = await this.eventsService.getSingleEvent(+id);
-    if (!event) {
-      return { message: 'Event not found' };
-    }
-    return event;
-  }
-
-  @Put(':id')
-  async updateEvent(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateEventDto: UpdateEventDto,
-  ): Promise<Event> {
-    return this.eventsService.updateEvent(id, updateEventDto);
+  ): Promise<Event | null> {
+    return await this.eventsService.getSingleEvent(id);
   }
 
   @Post()
@@ -55,19 +63,11 @@ export class EventsController {
     return this.eventsService.createEvent(createEventDto, imageBuffer);
   }
 
-  @Post('cart/add')
-  async addToCart(
-    @Body('userId', ParseIntPipe) userId: number,
-    @Body('eventId', ParseIntPipe) eventId: number,
-  ): Promise<Event[]> {
-    const user = await this.eventsService.addToCart(userId, eventId);
-    return user.cart;
-  }
-
-  @Get('cart/:userId')
-  async getCart(
-    @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<Event[]> {
-    return this.eventsService.getCart(userId);
+  @Put(':id')
+  async updateEvent(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateEventDto: UpdateEventDto,
+  ): Promise<Event> {
+    return this.eventsService.updateEvent(id, updateEventDto);
   }
 }

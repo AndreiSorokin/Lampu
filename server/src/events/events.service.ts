@@ -54,7 +54,20 @@ export class EventsService {
   }
 
   async getSingleEvent(id: number): Promise<Event | null> {
-    return this.eventsRepository.findOneBy({ id });
+    try {
+      const event = await this.eventsRepository.findOne({
+        where: { id },
+      });
+      if (!event) {
+        throw new NotFoundException(`Event with ID ${id} not found`);
+      }
+      return event;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to retrieve event');
+    }
   }
 
   async updateEvent(
@@ -117,12 +130,8 @@ export class EventsService {
     }
   }
 
-  async addToCart(userId: number, eventId: number): Promise<User> {
+  async addToCart(user: User, eventId: number): Promise<User> {
     try {
-      const user = await this.usersRepository.findOne({
-        where: { id: userId },
-        relations: ['cart'],
-      });
       const event = await this.eventsRepository.findOne({
         where: { id: eventId },
         relations: ['enrolledUsers'],
@@ -131,7 +140,7 @@ export class EventsService {
       if (!user || !event) {
         throw new BadRequestException('User or Event not found');
       }
-      if (event.enrolledUsers.length >= event.capacity) {
+      if (event.enrolledUsers && event.enrolledUsers.length >= event.capacity) {
         throw new BadRequestException('Event is at full capacity');
       }
       if (event.target && event.target !== user.role) {
@@ -158,17 +167,17 @@ export class EventsService {
     }
   }
 
-  async getCart(userId: number): Promise<Event[]> {
+  async getCart(user: User): Promise<Event[]> {
     try {
-      const user = await this.usersRepository.findOne({
-        where: { id: userId },
+      const freshUser = await this.usersRepository.findOne({
+        where: { id: user.id },
         relations: ['cart'],
       });
-      if (!user) {
+      if (!freshUser) {
         throw new BadRequestException('User not found');
       }
-      return user.cart || [];
-    } catch (error: any) {
+      return freshUser.cart || [];
+    } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
