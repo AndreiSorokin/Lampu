@@ -144,24 +144,11 @@ export class EventsService {
         throw new BadRequestException('User or Event not found');
       }
 
-      console.log('User attempting to enroll: ', user.id);
-      console.log(
-        'Enrolled Users before: ',
-        event.enrolledUsers?.map((u) => u.id) || [],
-      );
-
       const currentEnrollment = event.enrolledUsers
         ? event.enrolledUsers.length
         : 0;
-      console.log(
-        'Current Enrollment: ',
-        currentEnrollment,
-        ' Capacity: ',
-        event.capacity,
-      );
 
       if (currentEnrollment >= event.capacity) {
-        console.log('Rejecting due to full capacity');
         throw new BadRequestException('Event is at full capacity');
       }
 
@@ -174,23 +161,12 @@ export class EventsService {
       event.enrolledUsers = event.enrolledUsers || [];
       if (!event.enrolledUsers.some((u) => u.id === user.id)) {
         event.enrolledUsers.push(user);
-        console.log(
-          'Enrolled Users after adding: ',
-          event.enrolledUsers.map((u) => u.id),
-        );
-      } else {
-        console.log('User already enrolled, skipping addition');
       }
 
       const savedEvent = await this.eventsRepository.save(event);
-      console.log(
-        'Enrolled Users after save: ',
-        savedEvent.enrolledUsers.map((u) => u.id),
-      );
 
       return savedEvent;
     } catch (error) {
-      console.log('Error in bookEvent: ', error);
       if (error instanceof BadRequestException) {
         throw error;
       }
@@ -199,12 +175,6 @@ export class EventsService {
   }
   async addToCart(user: User, eventId: string): Promise<UserResponseDto> {
     try {
-      console.log(
-        'Starting addToCart for user: ',
-        user.id,
-        ' event: ',
-        eventId,
-      );
       const event = await this.bookEvent(user, eventId);
 
       user.cart = user.cart || [];
@@ -213,16 +183,11 @@ export class EventsService {
       }
 
       const savedUser = await this.usersRepository.save(user);
-      console.log(
-        'User cart after save: ',
-        savedUser.cart.map((e) => e.id),
-      );
 
       return plainToClass(UserResponseDto, savedUser, {
         excludeExtraneousValues: true,
       });
     } catch (error) {
-      console.log('Error in addToCart: ', error);
       if (error instanceof BadRequestException) {
         throw error;
       }
@@ -250,10 +215,6 @@ export class EventsService {
 
       event.enrolledUsers =
         event.enrolledUsers?.filter((u) => u.id !== user.id) || [];
-      console.log(
-        'Enrolled Users after removal: ',
-        event.enrolledUsers.map((u) => u.id),
-      );
       await this.eventsRepository.save(event);
 
       freshUser.cart = freshUser.cart?.filter((e) => e.id !== eventId) || [];
@@ -263,7 +224,6 @@ export class EventsService {
         excludeExtraneousValues: true,
       });
     } catch (error) {
-      console.log('Error in removeFromCart: ', error);
       if (error instanceof BadRequestException) {
         throw error;
       }

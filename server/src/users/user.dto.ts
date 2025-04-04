@@ -1,4 +1,3 @@
-// src/users/user.dto.ts
 import {
   IsString,
   IsNotEmpty,
@@ -78,6 +77,7 @@ export class UserResponseDto {
 
   @Expose()
   @Transform(({ value }) =>
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
     value.map((event: any) => ({ id: event.id, name: event.name })),
   )
   cart!: { id: string; name: string }[];
