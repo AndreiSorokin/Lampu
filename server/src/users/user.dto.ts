@@ -1,5 +1,4 @@
 // src/users/user.dto.ts
-
 import {
   IsString,
   IsNotEmpty,
@@ -11,6 +10,7 @@ import {
 } from 'class-validator';
 import { UserRole } from '../users/user-role.enum';
 import { IsPastDateConstraint } from './validators/is-past-date.validator';
+import { Exclude, Expose, Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @IsString()
@@ -52,4 +52,36 @@ export class CreateUserDto {
   @IsEnum(UserRole, { message: 'Role must be a valid UserRole value' })
   @IsOptional()
   role?: UserRole;
+}
+
+export class UserResponseDto {
+  @Expose()
+  id!: string;
+
+  @Expose()
+  email!: string;
+
+  @Expose()
+  role!: UserRole;
+
+  @Expose()
+  name?: string;
+
+  @Expose()
+  dateOfBirth!: string;
+
+  @Expose()
+  instagram?: string;
+
+  @Expose()
+  telegram?: string;
+
+  @Expose()
+  @Transform(({ value }) =>
+    value.map((event: any) => ({ id: event.id, name: event.name })),
+  )
+  cart!: { id: string; name: string }[];
+
+  @Exclude()
+  password!: string;
 }

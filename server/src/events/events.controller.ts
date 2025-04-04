@@ -8,6 +8,7 @@ import {
   UploadedFile,
   UseGuards,
   Delete,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
@@ -19,6 +20,7 @@ import { User } from '../users/user.entity';
 import { RolesGuard } from '../users/roles.guard';
 import { Roles } from '../users/roles.decorator';
 import { UserRole } from '../users/user-role.enum';
+import { UserResponseDto } from '../users/user.dto';
 
 @Controller('events')
 export class EventsController {
@@ -27,18 +29,18 @@ export class EventsController {
   @Post(':eventId/add-to-cart')
   @UseGuards(AuthGuard('jwt'))
   async addToCart(
-    @Param('eventId') eventId: string,
+    @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
-  ): Promise<User> {
-    return this.eventsService.addToCart(user, eventId);
+  ): Promise<UserResponseDto> {
+    return await this.eventsService.addToCart(user, eventId);
   }
 
   @Delete(':eventId/remove-from-cart')
   @UseGuards(AuthGuard('jwt'))
   async removeFromCart(
-    @Param('eventId') eventId: string,
+    @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
-  ): Promise<User> {
+  ): Promise<UserResponseDto> {
     return await this.eventsService.removeFromCart(user, eventId);
   }
 
