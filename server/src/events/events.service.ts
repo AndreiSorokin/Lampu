@@ -53,7 +53,7 @@ export class EventsService {
     return this.eventsRepository.find();
   }
 
-  async getSingleEvent(id: number): Promise<Event | null> {
+  async getSingleEvent(id: string): Promise<Event | null> {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id },
@@ -71,7 +71,7 @@ export class EventsService {
   }
 
   async updateEvent(
-    id: number,
+    id: string,
     updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     try {
@@ -130,7 +130,7 @@ export class EventsService {
     }
   }
 
-  async addToCart(user: User, eventId: number): Promise<User> {
+  async addToCart(user: User, eventId: string): Promise<User> {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id: eventId },

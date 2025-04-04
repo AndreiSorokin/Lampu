@@ -2,5 +2,6 @@
 
 Forgot password
 Reset password
-Assign member
+Notification reminders for users
+Notifications if users cancel booking
 link AWS

@@ -18,6 +18,34 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
+  async toggleMember(id: string, role: UserRole) {
+    try {
+      const user = await this.usersRepository.findOne({
+        where: { id },
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+      if (![UserRole.USER, UserRole.MEMBERS].includes(role)) {
+        throw new BadRequestException('Invalid role update');
+      }
+
+      user.role = role;
+
+      if (user.role === UserRole.ADMIN || role === UserRole.ADMIN) {
+        throw new UnauthorizedException('Changing admin roles is not allowed');
+      }
+      await this.usersRepository.save(user);
+      return user;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to toggle role');
+    }
+  }
+
   async updatePassword(
     user: User,
     oldPassword: string,
@@ -70,13 +98,12 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
-  async findOne(id: number): Promise<User | null> {
+  async findOne(id: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       where: { id },
       relations: ['cart'],
       select: ['id', 'email', 'password', 'role', 'name'],
     });
-    console.log('User found in findOne:', user);
     return user;
   }
 }

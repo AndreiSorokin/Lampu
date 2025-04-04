@@ -15,10 +15,23 @@ import { CreateUserDto } from './user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from './current-user.decorator';
 import { UpdatePasswordDto } from './update-password.dto';
+import { UserRole } from './user-role.enum';
+import { Roles } from './roles.decorator';
+import { UpdateRoleDto } from './update-role.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post('toggle-member/:id')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles(UserRole.ADMIN)
+  async toggleMember(
+    @Param('id') id: string,
+    @Body() updateRoleDto: UpdateRoleDto,
+  ) {
+    return await this.usersService.toggleMember(id, updateRoleDto.role);
+  }
 
   @Post('update-password')
   @UseGuards(AuthGuard('jwt'))
@@ -59,7 +72,7 @@ export class UsersController {
   async findOne(
     @Param('id') id: string,
   ): Promise<User | null | { message: string }> {
-    const user = await this.usersService.findOne(+id);
+    const user = await this.usersService.findOne(id);
     if (user === null) {
       return { message: 'User not found' };
     }

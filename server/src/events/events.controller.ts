@@ -27,7 +27,7 @@ export class EventsController {
   @Post(':eventId/add-to-cart')
   @UseGuards(AuthGuard('jwt'))
   async addToCart(
-    @Param('eventId', ParseIntPipe) eventId: number,
+    @Param('eventId') eventId: string,
     @CurrentUser() user: User,
   ): Promise<User> {
     return this.eventsService.addToCart(user, eventId);
@@ -36,7 +36,6 @@ export class EventsController {
   @Get('cart')
   @UseGuards(AuthGuard('jwt'))
   async getCart(@CurrentUser() user: User): Promise<Event[]> {
-    console.log('User in controller:', user);
     return this.eventsService.getCart(user);
   }
 
@@ -50,9 +49,7 @@ export class EventsController {
   }
 
   @Get(':id')
-  async getSingleEvent(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<Event | null> {
+  async getSingleEvent(@Param('id') id: string): Promise<Event | null> {
     return await this.eventsService.getSingleEvent(id);
   }
 
@@ -73,7 +70,7 @@ export class EventsController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
   async updateEvent(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     return this.eventsService.updateEvent(id, updateEventDto);
