@@ -37,4 +37,10 @@ export class User {
   @ManyToMany(() => Event, (event) => event.enrolledUsers, { cascade: true })
   @JoinTable()
   cart!: Event[];
+
+  @Column({ type: 'varchar', nullable: true })
+  resetToken!: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  resetTokenExpiration!: Date | null;
 }

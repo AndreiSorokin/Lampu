@@ -12,15 +12,15 @@ import {
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
-import { CreateEventDto } from './event.dto';
-import { UpdateEventDto } from './update-event.dto';
+import { CreateEventDto } from '../dtos/event/event.dto';
+import { UpdateEventDto } from '../dtos/event/update-event.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../users/current-user.decorator';
 import { User } from '../users/user.entity';
 import { RolesGuard } from '../users/roles.guard';
 import { Roles } from '../users/roles.decorator';
 import { UserRole } from '../users/user-role.enum';
-import { UserResponseDto } from '../users/user.dto';
+import { UserResponseDto } from '../dtos/user/user.dto';
 
 @Controller('events')
 export class EventsController {

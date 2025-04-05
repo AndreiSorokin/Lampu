@@ -16,9 +16,9 @@ import {
 
 import { Event } from './event.entity';
 import { User } from '../users/user.entity';
-import { CreateEventDto } from './event.dto';
-import { UpdateEventDto } from './update-event.dto';
-import { UserResponseDto } from '../users/user.dto';
+import { CreateEventDto } from '../dtos/event/event.dto';
+import { UpdateEventDto } from '../dtos/event/update-event.dto';
+import { UserResponseDto } from '../dtos/user/user.dto';
 import { plainToClass } from 'class-transformer';
 
 @Injectable()

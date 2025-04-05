@@ -1,5 +1,6 @@
 import {
   IsString,
+  IsNotEmpty,
   IsDate,
   IsNumber,
   IsOptional,
@@ -7,26 +8,25 @@ import {
   Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { UserRole } from '../users/user-role.enum';
+import { UserRole } from '../../users/user-role.enum';
 
-export class UpdateEventDto {
+export class CreateEventDto {
   @IsString()
-  @IsOptional()
-  name?: string;
+  @IsNotEmpty()
+  name!: string;
 
   @IsString()
   @IsOptional()
   description?: string;
 
   @IsDate()
-  @IsOptional()
+  @IsNotEmpty()
   @Type(() => Date)
-  date?: Date;
+  date!: Date;
 
-  @IsNumber({}, { message: 'Price must be a number' })
-  @IsOptional()
-  @Min(0, { message: 'Price cannot be negative' })
-  price?: number;
+  @IsNumber()
+  @IsNotEmpty()
+  price!: number;
 
   @IsString()
   @IsOptional()
@@ -37,11 +37,7 @@ export class UpdateEventDto {
   target?: UserRole;
 
   @IsNumber({}, { message: 'Capacity must be a number' })
-  @IsOptional()
+  @IsNotEmpty({ message: 'Capacity is required' })
   @Min(1, { message: 'Capacity must be at least 1' })
-  capacity?: number;
-
-  @IsString()
-  @IsOptional()
-  image?: string;
+  capacity!: number;
 }

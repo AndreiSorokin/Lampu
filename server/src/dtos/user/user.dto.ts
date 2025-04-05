@@ -7,8 +7,8 @@ import {
   IsOptional,
   Validate,
 } from 'class-validator';
-import { UserRole } from '../users/user-role.enum';
-import { IsPastDateConstraint } from './validators/is-past-date.validator';
+import { UserRole } from '../../users/user-role.enum';
+import { IsPastDateConstraint } from '../../users/validators/is-past-date.validator';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 export class CreateUserDto {

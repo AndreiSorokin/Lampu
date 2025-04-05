@@ -11,17 +11,32 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
-import { CreateUserDto } from './user.dto';
+import { CreateUserDto } from '../dtos/user/user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from './current-user.decorator';
-import { UpdatePasswordDto } from './update-password.dto';
+import { UpdatePasswordDto } from '../dtos/user/update-password.dto';
 import { UserRole } from './user-role.enum';
 import { Roles } from './roles.decorator';
-import { UpdateRoleDto } from './update-role.dto';
+import { UpdateRoleDto } from '../dtos/user/update-role.dto';
+import { ForgotPasswordDto } from '../dtos/user/forgot-password.dto';
+import { ResetPasswordDto } from '../dtos/user/reset-password.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return await this.usersService.forgotPassword(forgotPasswordDto.email);
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return await this.usersService.resetPassword(
+      resetPasswordDto.token,
+      resetPasswordDto.newPassword,
+    );
+  }
 
   @Post('toggle-member/:id')
   @UseGuards(AuthGuard('jwt'))
