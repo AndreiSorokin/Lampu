@@ -1,8 +1,6 @@
 # Lampu
 
 ## BackEnd:
-link AWS
-
 Change verificationLink
 Change appDeepLink
 
