@@ -13,11 +13,14 @@ import {
   PutObjectCommand,
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
+import * as path from 'path';
 
 import { Event } from './event.entity';
 import { User } from '../users/user.entity';
-import { CreateEventDto } from './event.dto';
-import { UpdateEventDto } from './update-event.dto';
+import { CreateEventDto } from '../dtos/event/event.dto';
+import { UpdateEventDto } from '../dtos/event/update-event.dto';
+import { UserResponseDto } from '../dtos/user/user.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class EventsService {
@@ -53,10 +56,11 @@ export class EventsService {
     return this.eventsRepository.find();
   }
 
-  async getSingleEvent(id: number): Promise<Event | null> {
+  async getSingleEvent(id: string): Promise<Event | null> {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id },
+        relations: ['enrolledUsers'],
       });
       if (!event) {
         throw new NotFoundException(`Event with ID ${id} not found`);
@@ -71,7 +75,7 @@ export class EventsService {
   }
 
   async updateEvent(
-    id: number,
+    id: string,
     updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     try {
@@ -97,7 +101,7 @@ export class EventsService {
 
   async createEvent(
     createEventDto: CreateEventDto,
-    imageBuffer?: Buffer,
+    file?: Express.Multer.File,
   ): Promise<Event> {
     try {
       const today = new Date();
@@ -111,17 +115,21 @@ export class EventsService {
       const event = this.eventsRepository.create(createEventDto);
       const savedEvent = await this.eventsRepository.save(event);
 
-      if (imageBuffer) {
-        const key = `events/${savedEvent.id}/image.jpg`;
+      if (file) {
+        const fileExtension = path.extname(file.originalname).toLowerCase();
+        const key = `events/${savedEvent.id}/image${fileExtension}`;
         await this.s3Client.send(
           new PutObjectCommand({
             Bucket: process.env.AWS_S3_BUCKET,
             Key: key,
-            Body: imageBuffer,
-            ContentType: 'image/jpeg',
+            Body: file.buffer,
+            ContentType: file.mimetype,
           }),
         );
         savedEvent.imageUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        await this.eventsRepository.save(savedEvent);
+      } else if (createEventDto.imageUrl) {
+        savedEvent.imageUrl = createEventDto.imageUrl;
         await this.eventsRepository.save(savedEvent);
       }
       return savedEvent;
@@ -130,7 +138,32 @@ export class EventsService {
     }
   }
 
-  async addToCart(user: User, eventId: number): Promise<User> {
+  async deleteEvent(eventId: string): Promise<void> {
+    try {
+      const event = await this.eventsRepository.findOneBy({ id: eventId });
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.imageUrl) {
+        const urlParts = event.imageUrl.split('/');
+        const key = urlParts.slice(3).join('/');
+
+        await this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: key,
+          }),
+        );
+      }
+      await this.eventsRepository.delete({ id: eventId });
+    } catch {
+      throw new InternalServerErrorException('Failed to delete events');
+    }
+  }
+
+  async bookEvent(user: User, eventId: string): Promise<Event> {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id: eventId },
@@ -140,30 +173,93 @@ export class EventsService {
       if (!user || !event) {
         throw new BadRequestException('User or Event not found');
       }
-      if (event.enrolledUsers && event.enrolledUsers.length >= event.capacity) {
+
+      const currentEnrollment = event.enrolledUsers
+        ? event.enrolledUsers.length
+        : 0;
+
+      if (currentEnrollment >= event.capacity) {
         throw new BadRequestException('Event is at full capacity');
       }
+
       if (event.target && event.target !== user.role) {
         throw new BadRequestException(
           `This event is restricted to ${event.target} users`,
         );
       }
 
-      user.cart = user.cart || [];
-      if (!user.cart.some((e) => e.id === eventId)) {
-        user.cart.push(event);
+      event.enrolledUsers = event.enrolledUsers || [];
+      if (!event.enrolledUsers.some((u) => u.id === user.id)) {
+        event.enrolledUsers.push(user);
       }
-      return await this.usersRepository.save(user);
+
+      const savedEvent = await this.eventsRepository.save(event);
+
+      return savedEvent;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      if (error instanceof QueryFailedError) {
-        throw new BadRequestException(
-          'Failed to update cart due to database error',
-        );
+      throw new InternalServerErrorException('Failed to book event');
+    }
+  }
+  async addToCart(user: User, eventId: string): Promise<UserResponseDto> {
+    try {
+      const event = await this.bookEvent(user, eventId);
+
+      user.cart = user.cart || [];
+      if (!user.cart.some((e) => e.id === eventId)) {
+        user.cart.push(event);
+      }
+
+      const savedUser = await this.usersRepository.save(user);
+
+      return plainToClass(UserResponseDto, savedUser, {
+        excludeExtraneousValues: true,
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
       }
       throw new InternalServerErrorException('Failed to add event to cart');
+    }
+  }
+
+  async removeFromCart(user: User, eventId: string): Promise<UserResponseDto> {
+    try {
+      const freshUser = await this.usersRepository.findOne({
+        where: { id: user.id },
+        relations: ['cart'],
+      });
+      if (!freshUser) {
+        throw new BadRequestException('User not found');
+      }
+
+      const event = await this.eventsRepository.findOne({
+        where: { id: eventId },
+        relations: ['enrolledUsers'],
+      });
+      if (!event) {
+        throw new BadRequestException('Event not found');
+      }
+
+      event.enrolledUsers =
+        event.enrolledUsers?.filter((u) => u.id !== user.id) || [];
+      await this.eventsRepository.save(event);
+
+      freshUser.cart = freshUser.cart?.filter((e) => e.id !== eventId) || [];
+      const savedUser = await this.usersRepository.save(freshUser);
+
+      return plainToClass(UserResponseDto, savedUser, {
+        excludeExtraneousValues: true,
+      });
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'Failed to remove event from cart',
+      );
     }
   }
 

@@ -3,8 +3,8 @@ import { User } from '../users/user.entity';
 import { UserRole } from '../users/user-role.enum';
 @Entity()
 export class Event {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column()
   name!: string;

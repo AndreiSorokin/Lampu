@@ -8,6 +8,7 @@ import { User } from './users/user.entity';
 import { EventsModule } from './events/events.module';
 import { Event } from './events/event.entity';
 import { AuthModule } from './auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -33,6 +34,20 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     EventsModule,
     AuthModule,
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.MAILER_USER,
+          pass: process.env.MAILER_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      },
+    }),
   ],
 })
 export class AppModule {}

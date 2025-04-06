@@ -4,18 +4,25 @@ import {
   Get,
   Body,
   Param,
-  ParseIntPipe,
   Put,
   UploadedFile,
   UseGuards,
+  Delete,
+  ParseUUIDPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
-import { CreateEventDto } from './event.dto';
-import { UpdateEventDto } from './update-event.dto';
+import { CreateEventDto } from '../dtos/event/event.dto';
+import { UpdateEventDto } from '../dtos/event/update-event.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../users/current-user.decorator';
 import { User } from '../users/user.entity';
+import { RolesGuard } from '../users/roles.guard';
+import { Roles } from '../users/roles.decorator';
+import { UserRole } from '../users/user-role.enum';
+import { UserResponseDto } from '../dtos/user/user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('events')
 export class EventsController {
@@ -24,16 +31,33 @@ export class EventsController {
   @Post(':eventId/add-to-cart')
   @UseGuards(AuthGuard('jwt'))
   async addToCart(
-    @Param('eventId', ParseIntPipe) eventId: number,
+    @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
-  ): Promise<User> {
-    return this.eventsService.addToCart(user, eventId);
+  ): Promise<UserResponseDto> {
+    return await this.eventsService.addToCart(user, eventId);
+  }
+
+  @Delete(':eventId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteEvent(
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+  ): Promise<void> {
+    await this.eventsService.deleteEvent(eventId);
+  }
+
+  @Delete(':eventId/remove-from-cart')
+  @UseGuards(AuthGuard('jwt'))
+  async removeFromCart(
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+    @CurrentUser() user: User,
+  ): Promise<UserResponseDto> {
+    return await this.eventsService.removeFromCart(user, eventId);
   }
 
   @Get('cart')
   @UseGuards(AuthGuard('jwt'))
   async getCart(@CurrentUser() user: User): Promise<Event[]> {
-    console.log('User in controller:', user);
     return this.eventsService.getCart(user);
   }
 
@@ -47,25 +71,26 @@ export class EventsController {
   }
 
   @Get(':id')
-  async getSingleEvent(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<Event | null> {
+  async getSingleEvent(@Param('id') id: string): Promise<Event | null> {
     return await this.eventsService.getSingleEvent(id);
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   async createEvent(
     @Body() createEventDto: CreateEventDto,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-    const imageBuffer: Buffer | undefined = file ? file.buffer : undefined;
-    return this.eventsService.createEvent(createEventDto, imageBuffer);
+    return this.eventsService.createEvent(createEventDto, file);
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
   async updateEvent(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
   ): Promise<Event> {
     return this.eventsService.updateEvent(id, updateEventDto);
