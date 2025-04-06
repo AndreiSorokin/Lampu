@@ -26,6 +26,7 @@ export class CreateEventDto {
 
   @IsNumber()
   @IsNotEmpty()
+  @Type(() => Number)
   price!: number;
 
   @IsString()
@@ -39,6 +40,7 @@ export class CreateEventDto {
   @IsNumber({}, { message: 'Capacity must be a number' })
   @IsNotEmpty({ message: 'Capacity is required' })
   @Min(1, { message: 'Capacity must be at least 1' })
+  @Type(() => Number)
   capacity!: number;
 
   @IsString()

@@ -37,6 +37,15 @@ export class EventsController {
     return await this.eventsService.addToCart(user, eventId);
   }
 
+  @Delete(':eventId')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteEvent(
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+  ): Promise<void> {
+    await this.eventsService.deleteEvent(eventId);
+  }
+
   @Delete(':eventId/remove-from-cart')
   @UseGuards(AuthGuard('jwt'))
   async removeFromCart(

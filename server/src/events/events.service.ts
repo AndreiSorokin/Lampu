@@ -138,6 +138,31 @@ export class EventsService {
     }
   }
 
+  async deleteEvent(eventId: string): Promise<void> {
+    try {
+      const event = await this.eventsRepository.findOneBy({ id: eventId });
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      if (event.imageUrl) {
+        const urlParts = event.imageUrl.split('/');
+        const key = urlParts.slice(3).join('/');
+
+        await this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: key,
+          }),
+        );
+      }
+      await this.eventsRepository.delete({ id: eventId });
+    } catch {
+      throw new InternalServerErrorException('Failed to delete events');
+    }
+  }
+
   async bookEvent(user: User, eventId: string): Promise<Event> {
     try {
       const event = await this.eventsRepository.findOne({
