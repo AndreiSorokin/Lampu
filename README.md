@@ -4,6 +4,7 @@
 link AWS
 
 Change verificationLink
+Change appDeepLink
 
 ## FrontEnd:
 Notification reminders for users

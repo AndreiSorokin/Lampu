@@ -13,6 +13,7 @@ import {
   PutObjectCommand,
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
+import * as path from 'path';
 
 import { Event } from './event.entity';
 import { User } from '../users/user.entity';
@@ -100,7 +101,7 @@ export class EventsService {
 
   async createEvent(
     createEventDto: CreateEventDto,
-    imageBuffer?: Buffer,
+    file?: Express.Multer.File,
   ): Promise<Event> {
     try {
       const today = new Date();
@@ -114,17 +115,21 @@ export class EventsService {
       const event = this.eventsRepository.create(createEventDto);
       const savedEvent = await this.eventsRepository.save(event);
 
-      if (imageBuffer) {
-        const key = `events/${savedEvent.id}/image.jpg`;
+      if (file) {
+        const fileExtension = path.extname(file.originalname).toLowerCase();
+        const key = `events/${savedEvent.id}/image${fileExtension}`;
         await this.s3Client.send(
           new PutObjectCommand({
             Bucket: process.env.AWS_S3_BUCKET,
             Key: key,
-            Body: imageBuffer,
-            ContentType: 'image/jpeg',
+            Body: file.buffer,
+            ContentType: file.mimetype,
           }),
         );
         savedEvent.imageUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        await this.eventsRepository.save(savedEvent);
+      } else if (createEventDto.imageUrl) {
+        savedEvent.imageUrl = createEventDto.imageUrl;
         await this.eventsRepository.save(savedEvent);
       }
       return savedEvent;

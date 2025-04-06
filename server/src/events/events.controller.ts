@@ -9,6 +9,7 @@ import {
   UseGuards,
   Delete,
   ParseUUIDPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
@@ -21,6 +22,7 @@ import { RolesGuard } from '../users/roles.guard';
 import { Roles } from '../users/roles.decorator';
 import { UserRole } from '../users/user-role.enum';
 import { UserResponseDto } from '../dtos/user/user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('events')
 export class EventsController {
@@ -67,14 +69,12 @@ export class EventsController {
   @Post()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN)
-  // @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'))
   async createEvent(
     @Body() createEventDto: CreateEventDto,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-    const imageBuffer: Buffer | undefined = file ? file.buffer : undefined;
-    return this.eventsService.createEvent(createEventDto, imageBuffer);
+    return this.eventsService.createEvent(createEventDto, file);
   }
 
   @Put(':id')

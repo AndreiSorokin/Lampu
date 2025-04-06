@@ -39,7 +39,6 @@ export class UsersService {
       user.resetTokenExpiration = tokenExpiration;
       await this.usersRepository.save(user);
 
-      //TODO:
       const appDeepLink = `myapp://reset-password?token=${token}`;
       await this.mailerService.sendMail({
         to: email,
@@ -49,8 +48,6 @@ export class UsersService {
 
       return { message: 'Password reset email sent successfully' };
     } catch (error) {
-      console.log("Error: ", error)
-
       if (error instanceof BadRequestException) {
         throw error;
       }
