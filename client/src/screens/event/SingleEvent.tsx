@@ -3,8 +3,16 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import cakeBoy from '../../../assets/images/cakeBoy.png';
 import { Event } from '../../types/events';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const SingleEvent = ({ route, navigation }) => {
+type RootStackParamList = {
+  SingleEvent: { eventId: string };
+  Events: undefined;
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, 'SingleEvent'>;
+
+const SingleEvent: React.FC<Props> = ({ route, navigation }) => {
   const { eventId } = route.params;
   const [event, setEvent] = useState<Event | null>(null);
 

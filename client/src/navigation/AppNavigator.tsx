@@ -15,7 +15,7 @@ function EventStack() {
      <Stack.Navigator>
        <Stack.Screen name="Home" component={Home} />
        <Stack.Screen name="Events" component={Events} />
-       <Stack.Screen name="Event" component={SingleEvent}/>
+       <Stack.Screen name="SingleEvent" component={SingleEvent}/>
        <Stack.Screen name="Create event" component={CreateEvent} />
      </Stack.Navigator>
    );

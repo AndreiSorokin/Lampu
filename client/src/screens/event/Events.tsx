@@ -3,8 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, Image, TouchableOpacity } from 'react-native';
 import { Event } from '../../types/events';
 import cakeBoy from '../../../assets/images/cakeBoy.png';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const Events = ({ navigation }) => {
+type RootStackParamList = {
+  SingleEvent: { eventId: string };
+  Events: undefined;
+};
+
+type Props = NativeStackScreenProps<RootStackParamList, 'Events'>;
+
+const Events: React.FC<Props> = ({ navigation }) => {
   const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
@@ -20,7 +28,7 @@ const Events = ({ navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate('Event', { eventId: item.id })}
+            onPress={() => navigation.navigate('SingleEvent', { eventId: item.id })}
           >
             <View style={{ padding: 10, borderBottomWidth: 1 }}>
               <Image
