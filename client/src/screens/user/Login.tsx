@@ -1,10 +1,11 @@
 import React from 'react'
+import { View } from 'react-native'
 
 const Login = () => {
   return (
-    <div>
+    <View>
       Login
-    </div>
+    </View>
   )
 }
 
