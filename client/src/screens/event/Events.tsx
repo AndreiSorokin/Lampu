@@ -1,9 +1,10 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { FlatList, View, Text } from 'react-native'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, Text, Image, TouchableOpacity } from 'react-native';
 import { Event } from '../../types/events';
+import cakeBoy from '../../../assets/images/cakeBoy.png';
 
-const Events = () => {
+const Events = ({ navigation }) => {
   const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
@@ -18,9 +19,19 @@ const Events = () => {
         data={events}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ padding: 10, borderBottomWidth: 1 }}>
-            <Text>{item.name}</Text>
-          </View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Event', { eventId: item.id })}
+          >
+            <View style={{ padding: 10, borderBottomWidth: 1 }}>
+              <Image
+                source={item.imageUrl ? { uri: item.imageUrl } : cakeBoy}
+                style={{ width: 100, height: 100 }}
+              />
+              <Text>{item.name}</Text>
+              <Text>Date: {item.date}</Text>
+              <Text>Price: ${item.price}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
     </View>

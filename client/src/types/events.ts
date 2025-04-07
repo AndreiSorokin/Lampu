@@ -4,7 +4,7 @@ export type Event = {
    id: string;
    name: string;
    description?: string;
-   date: Date;
+   date: string;
    price: number;
    address?: string;
    target?: UserRole;

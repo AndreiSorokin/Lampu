@@ -16,10 +16,6 @@ export default function Home() {
         onPress={() => navigation.navigate('Events')}
       />
       <Button
-        title="View Single Event"
-        onPress={() => navigation.navigate('Event')}
-      />
-      <Button
         title="Create New Event"
         onPress={() => navigation.navigate('Create event')}
       />
