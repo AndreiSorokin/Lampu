@@ -6,26 +6,56 @@ import CreateEvent from '../screens/event/CreateEvent';
 import SingleEvent from '../screens/event/SingleEvent';
 import Profile from '../screens/user/Profile';
 import Login from '../screens/user/Login';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function EventStack() {
-   return (
-     <Stack.Navigator>
-       <Stack.Screen name="Home" component={Home} />
-       <Stack.Screen name="Events" component={Events} />
-       <Stack.Screen name="SingleEvent" component={SingleEvent}/>
-       <Stack.Screen name="Create event" component={CreateEvent} />
-     </Stack.Navigator>
-   );
- }
- 
- export default function AppNavigator() {
-   return (
-     <Tab.Navigator>
-       <Tab.Screen name="Home" component={EventStack} options={{ headerShown: false }} />
-       <Tab.Screen name="Login" component={Login} />
-     </Tab.Navigator>
-   );
- }
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Events" component={Events} />
+      <Stack.Screen name="SingleEvent" component={SingleEvent}/>
+      <Stack.Screen name="Create event" component={CreateEvent} />
+      <Stack.Screen name="Profile" component={Profile}/>
+    </Stack.Navigator>
+  );
+}
+
+export default function AppNavigator() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        setIsLoggedIn(!!token);
+      } catch (error) {
+        console.error('Error checking login status:', error);
+        setIsLoggedIn(false);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  if (isLoggedIn === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  return (
+
+        <Tab.Navigator>
+          <Tab.Screen name="Home" component={EventStack} options={{ headerShown: false }} />
+          <Tab.Screen name="Login" component={Login} />
+        </Tab.Navigator>
+
+  );
+}
