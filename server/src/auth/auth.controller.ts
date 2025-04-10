@@ -1,9 +1,15 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { FirebaseAdminService } from '../firebase/firebase-admin.service';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private firebaseAdmin: FirebaseAdminService,
+    private usersService: UsersService,
+  ) {}
 
   @Post('login')
   async login(@Body() body: { email: string; password: string }) {
@@ -15,10 +21,10 @@ export class AuthController {
     const decoded = await this.firebaseAdmin.verifyIdToken(body.token);
 
     // Optional: find/create user in your DB using Firebase uid or email
-    // let user = await this.usersService.findByFirebaseUid(decoded.uid);
-    // if (!user) {
-    //   user = await this.usersService.createFromFirebase(decoded);
-    // }
+    let user = await this.usersService.findByFirebaseUid(decoded.uid);
+    if (!user) {
+      user = await this.usersService.createFromFirebase(decoded);
+    }
 
     return {
       message: 'Token is valid',

@@ -4,7 +4,7 @@
 Change verificationLink
 Change appDeepLink`
 
-Add refresh token
+do I iterate by both firebaseUid and id?
 
 ## FrontEnd:
 Multi language

@@ -13,6 +13,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({ name: 'firebase_uid', unique: true })
+  firebaseUid!: string;
+
   @Column({ unique: true })
   email!: string;
 

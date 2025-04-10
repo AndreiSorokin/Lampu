@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   BadRequestException,
   Injectable,
@@ -20,6 +22,20 @@ export class UsersService {
     private usersRepository: Repository<User>,
     private mailerService: MailerService,
   ) {}
+
+  async findByFirebaseUid(uid: string): Promise<User | null> {
+    return await this.usersRepository.findOne({ where: { firebaseUid: uid } });
+  }
+
+  async createFromFirebase(decoded: any): Promise<User> {
+    const newUser = this.usersRepository.create({
+      firebaseUid: decoded.uid,
+      email: decoded.email,
+      name: decoded.name || '',
+    });
+
+    return await this.usersRepository.save(newUser);
+  }
 
   async forgotPassword(email: string): Promise<{ message: string }> {
     try {
