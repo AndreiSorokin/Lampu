@@ -2,7 +2,9 @@
 
 ## BackEnd:
 Change verificationLink
-Change appDeepLink
+Change appDeepLink`
+
+Add refresh token
 
 ## FrontEnd:
 Multi language

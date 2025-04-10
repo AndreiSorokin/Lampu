@@ -12,7 +12,6 @@ import {
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { CreateUserDto } from '../dtos/user/user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from './current-user.decorator';
 import { UpdatePasswordDto } from '../dtos/user/update-password.dto';
 import { UserRole } from './user-role.enum';
@@ -20,6 +19,7 @@ import { Roles } from './roles.decorator';
 import { UpdateRoleDto } from '../dtos/user/update-role.dto';
 import { ForgotPasswordDto } from '../dtos/user/forgot-password.dto';
 import { ResetPasswordDto } from '../dtos/user/reset-password.dto';
+import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
 
 @Controller('users')
 export class UsersController {
@@ -39,7 +39,7 @@ export class UsersController {
   }
 
   @Post('toggle-member/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   @Roles(UserRole.ADMIN)
   async toggleMember(
     @Param('id') id: string,
@@ -49,7 +49,7 @@ export class UsersController {
   }
 
   @Post('update-password')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   async updatePassword(
     @CurrentUser() user: User,
     @Body() updatePasswordDto: UpdatePasswordDto,
