@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   CanActivate,
   ExecutionContext,
@@ -21,7 +24,7 @@ export class FirebaseAuthGuard implements CanActivate {
     const token = authHeader.split('Bearer ')[1];
     try {
       const decodedToken = await this.firebaseAdmin.verifyIdToken(token);
-      request.user = decodedToken; // Attach user to request
+      request.user = decodedToken;
       return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired Firebase token');

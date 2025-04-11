@@ -5,8 +5,14 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../utils/firebaseConfig';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { AuthStackParamList } from '../../navigation/AppNavigator';
 
-const Login = ({ navigation }) => {
+type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+
+const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
   const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: 'center', padding: 20 },
     title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
@@ -20,14 +26,20 @@ const Login = ({ navigation }) => {
   };
 
   const handleSubmit = async (values: LoginFormData) => {
+    console.log("values: ", values);
     try {
-      const response = await axios.post('http://192.168.1.134:3000/auth/login', values);
-      const { token, user } = response.data;
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+      const token = await userCredential.user.getIdToken();
       await AsyncStorage.setItem('userToken', token);
-      await AsyncStorage.setItem('userData', JSON.stringify(user));
+      await AsyncStorage.setItem('userData', JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+      }));
       navigation.replace('Home');
     } catch (error) {
       console.error('Login error:', error);
+      throw error;
     }
   };
 

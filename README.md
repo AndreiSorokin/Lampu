@@ -4,8 +4,6 @@
 Change verificationLink
 Change appDeepLink`
 
-do I iterate by both firebaseUid and id?
-
 ## FrontEnd:
 Multi language
 Login, registration
