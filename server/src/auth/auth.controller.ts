@@ -26,7 +26,7 @@ export class AuthController {
       user = await this.usersService.createFromFirebase(decoded);
     }
 
-    console.log("user: ", user);
+    console.log('user: ', user);
 
     return {
       message: 'Token is valid',

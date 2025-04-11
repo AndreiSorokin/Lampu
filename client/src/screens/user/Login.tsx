@@ -1,20 +1,19 @@
 import React from 'react'
 import { View, Text, Button, TextInput, StyleSheet } from 'react-native'
-import { LoginFormData, loginSchema } from '../../navigation/zod/zod.schemas';
-import axios from 'axios';
+import { LoginFormData, loginSchema } from '../../zod/zod.schemas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebaseConfig';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { AuthStackParamList } from '../../navigation/AppNavigator';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 
-type LoginScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'Login'>;
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
   const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', padding: 20 },
+    container: { flex: 1, justifyContent: 'center', padding: 20, backgroundColor: '#FFF6E5' },
     title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
     input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
     error: { color: 'red', marginBottom: 10 },
@@ -25,9 +24,9 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
     password: '',
   };
 
-  const handleSubmit = async (values: LoginFormData) => {
-    console.log("values: ", values);
+  const handleSubmit = async (values: LoginFormData, { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }) => {
     try {
+      setSubmitting(true);
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       const token = await userCredential.user.getIdToken();
@@ -36,10 +35,10 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
         uid: user.uid,
         email: user.email,
       }));
-      navigation.replace('Home');
     } catch (error) {
-      console.error('Login error:', error);
       throw error;
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -78,6 +77,10 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
             )}
 
             <Button title="Login" onPress={() => handleSubmit()} />
+            <Button
+              title="Need an account? Register"
+              onPress={() => navigation.navigate('Register')}
+            />
           </View>
         )}
       </Formik>

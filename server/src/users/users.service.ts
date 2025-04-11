@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 import { User } from './user.entity';
@@ -158,25 +158,42 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
+  // async createUser(createUserDto: CreateUserDto): Promise<User> {
+  //   try {
+  //     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+  //     const user = this.usersRepository.create({
+  //       ...createUserDto,
+  //       password: hashedPassword,
+  //       role: createUserDto.role || UserRole.USER,
+  //       cart: [],
+  //     });
+  //     return await this.usersRepository.save(user);
+  //   } catch (error) {
+  //     if (error instanceof QueryFailedError) {
+  //       const driverError = error.driverError as { code: string };
+  //       if (driverError && driverError.code === '23505') {
+  //         throw new BadRequestException('Email already exists');
+  //       }
+  //     }
+  //     throw new InternalServerErrorException('Failed to create user');
+  //   }
+  // }
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    try {
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-      const user = this.usersRepository.create({
-        ...createUserDto,
-        password: hashedPassword,
-        role: createUserDto.role || UserRole.USER,
-        cart: [],
-      });
-      return await this.usersRepository.save(user);
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        const driverError = error.driverError as { code: string };
-        if (driverError && driverError.code === '23505') {
-          throw new BadRequestException('Email already exists');
-        }
-      }
-      throw new InternalServerErrorException('Failed to create user');
-    }
+    const user = new User();
+    user.firebaseUid = createUserDto.firebaseUid;
+    user.email = createUserDto.email;
+    user.password = await bcrypt.hash(createUserDto.password, 10);
+    user.name = createUserDto.name;
+    user.dateOfBirth = new Date(createUserDto.dateOfBirth);
+    user.role = createUserDto.role || UserRole.USER;
+    user.instagram = createUserDto.instagram;
+    user.telegram = createUserDto.telegram;
+    user.cart = [];
+    user.resetToken = null;
+    user.resetTokenExpiration = null;
+
+    return this.usersRepository.save(user);
   }
 
   findAll(): Promise<User[]> {

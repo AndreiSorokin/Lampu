@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
   Controller,
@@ -7,7 +8,9 @@ import {
   NotFoundException,
   Param,
   Post,
+  UnauthorizedException,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -20,6 +23,7 @@ import { UpdateRoleDto } from '../dtos/user/update-role.dto';
 import { ForgotPasswordDto } from '../dtos/user/forgot-password.dto';
 import { ResetPasswordDto } from '../dtos/user/reset-password.dto';
 import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
+import * as admin from 'firebase-admin';
 
 @Controller('users')
 export class UsersController {
@@ -70,8 +74,26 @@ export class UsersController {
   }
   @Post()
   @HttpCode(201)
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(createUserDto);
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+    @Headers('authorization') authHeader: string,
+  ) {
+    const token = authHeader?.split('Bearer ')[1];
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
+    }
+
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (decodedToken.uid !== createUserDto.firebaseUid) {
+        throw new UnauthorizedException('Invalid token: UID mismatch');
+      }
+
+      return this.usersService.createUser(createUserDto);
+    } catch {
+      throw new UnauthorizedException('Token verification failed');
+    }
   }
 
   @Get()

@@ -13,6 +13,9 @@ import { Exclude, Expose, Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @IsString()
+  firebaseUid!: string;
+
+  @IsString()
   @IsNotEmpty({ message: 'Email is required' })
   @Matches(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, {
     message: 'Email must match a valid format',
