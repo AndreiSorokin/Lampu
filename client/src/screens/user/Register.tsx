@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import React from 'react'
 import { auth } from 'src/utils/firebaseConfig';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -51,6 +51,21 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
     await AsyncStorage.setItem('userData', JSON.stringify({ uid: user.uid, email: user.email }));
     
     } catch (error) {
+      const currentUser = auth.currentUser;
+
+  if (currentUser && values.email && values.password) {
+    try {
+      const credential = EmailAuthProvider.credential(
+        values.email,
+        values.password
+      );
+
+      await reauthenticateWithCredential(currentUser, credential);
+      await currentUser.delete();
+    } catch (deleteError) {
+      console.error('Error deleting Firebase user:', deleteError);
+    }
+  }
       console.error('Error during registration:', error);
       if (error.code === 'auth/email-already-in-use') {
         setErrors({ email: 'This email is already registered' });

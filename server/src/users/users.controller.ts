@@ -90,6 +90,10 @@ export class UsersController {
         throw new UnauthorizedException('Invalid token: UID mismatch');
       }
 
+      if (decodedToken.email !== createUserDto.email) {
+        throw new UnauthorizedException('Email mismatch');
+      }
+
       return this.usersService.createUser(createUserDto);
     } catch {
       throw new UnauthorizedException('Token verification failed');
