@@ -11,15 +11,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Register from 'src/screens/user/Register';
+import Enrollments from 'src/screens/event/Enrollments';
 
 export type RootStackParamList = {
-  Home: undefined;
   Events: undefined;
-  Event: { eventId: number };
+  SingleEvent: { eventId: number };
   CreateEvent: undefined;
   Profile: undefined;
   Login: undefined;
   Register: undefined;
+  Enrollments: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -28,11 +29,11 @@ const Stack = createStackNavigator<RootStackParamList>();
 function EventStack() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Events" component={Events} />
-      <Stack.Screen name="Event" component={SingleEvent} options={{ title: 'Event Details' }}/>
+      <Stack.Screen name="SingleEvent" component={SingleEvent}/>
       <Stack.Screen name="CreateEvent" component={CreateEvent} />
       <Stack.Screen name="Profile" component={Profile}/>
+      <Stack.Screen name="Enrollments" component={Enrollments}/>
     </Stack.Navigator>
   );
 }
@@ -75,7 +76,8 @@ export default function AppNavigator() {
 
   return isLoggedIn ? (
     <Tab.Navigator>
-      <Tab.Screen name="Home" component={EventStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Enrollments" component={Enrollments}/>
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   ) : (
