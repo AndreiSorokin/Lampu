@@ -23,10 +23,15 @@
     "web": {
       "build": {
         "babel": {
-          "include": ["react-native-dotenv"]
+          "include": [
+            "react-native-dotenv"
+          ]
         }
       }
     },
-    "jsEngine": "jsc"
+    "jsEngine": "jsc",
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }
