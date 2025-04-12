@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import Home from '../screens/Home';
+import Tervetuloa from '../screens/Tervetuloa';
 import Events from '../screens/event/Events';
 import CreateEvent from '../screens/event/CreateEvent';
 import SingleEvent from '../screens/event/SingleEvent';
@@ -9,7 +9,6 @@ import Login from '../screens/user/Login';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import Register from 'src/screens/user/Register';
 import Enrollments from 'src/screens/event/Enrollments';
 
@@ -21,6 +20,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Enrollments: undefined;
+  Tervetuloa: undefined
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -28,22 +28,27 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function EventStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator 
+    screenOptions={{
+      contentStyle: { backgroundColor: '#FFF6E5' },
+    }}>
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="SingleEvent" component={SingleEvent}/>
       <Stack.Screen name="CreateEvent" component={CreateEvent} />
       <Stack.Screen name="Profile" component={Profile}/>
       <Stack.Screen name="Enrollments" component={Enrollments}/>
+      <Stack.Screen name="Tervetuloa" component={Tervetuloa}/>
     </Stack.Navigator>
   );
 }
 
 function AuthStack() {
   return (
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-      <Stack.Screen name="Register" component={Register} options={{ title: 'Register' }} />
-      <Stack.Screen name="Events" component={Events} options={{ title: 'Events' }} />
+    <Stack.Navigator initialRouteName="Tervetuloa">
+      <Stack.Screen name="Tervetuloa" component={Tervetuloa} options={{ headerShown: false }}/>
+      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
+      <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
+      <Stack.Screen name="Events" component={Events} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 }
