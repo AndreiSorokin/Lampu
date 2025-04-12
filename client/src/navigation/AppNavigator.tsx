@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, Text } from 'react-native';
 import Register from 'src/screens/user/Register';
 import Enrollments from 'src/screens/event/Enrollments';
+import Language from 'src/screens/Language';
 
 export type RootStackParamList = {
   Events: undefined;
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   Register: undefined;
   Enrollments: undefined;
   Tervetuloa: undefined
+  Language: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -38,13 +40,15 @@ function EventStack() {
       <Stack.Screen name="Profile" component={Profile}/>
       <Stack.Screen name="Enrollments" component={Enrollments}/>
       <Stack.Screen name="Tervetuloa" component={Tervetuloa}/>
+      <Stack.Screen name="Language" component={Language}/>
     </Stack.Navigator>
   );
 }
 
 function AuthStack() {
   return (
-    <Stack.Navigator initialRouteName="Tervetuloa">
+    <Stack.Navigator initialRouteName="Language">
+      <Stack.Screen name="Language" component={Language} options={{ headerShown: false }}/>
       <Stack.Screen name="Tervetuloa" component={Tervetuloa} options={{ headerShown: false }}/>
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
