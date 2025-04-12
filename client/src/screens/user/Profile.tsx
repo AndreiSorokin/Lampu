@@ -1,10 +1,21 @@
 import React from 'react'
-import { View } from 'react-native'
+import { View, Text, Button } from 'react-native'
 
 const Profile = () => {
+  const logOut = () => {
+    try {
+      localStorage.removeItem("userData")
+      localStorage.removeItem("userToken")
+    } catch (error) {
+      console.error(error)
+    }
+  }
   return (
     <View>
-      Profile
+      <Text>Profile</Text>
+      <Text>Membership</Text>
+      <Text>Language</Text>
+      <Button onPress={logOut}>Sign out</Button>
     </View>
   )
 }

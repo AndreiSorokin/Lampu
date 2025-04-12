@@ -13,6 +13,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({ name: 'firebase_uid', unique: true })
+  firebaseUid!: string;
+
   @Column({ unique: true })
   email!: string;
 
@@ -22,8 +25,8 @@ export class User {
   @Column({ nullable: true })
   name?: string;
 
-  @Column({ type: 'date', nullable: true })
-  dateOfBirth?: Date;
+  @Column({ type: 'date' })
+  dateOfBirth!: Date;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role!: UserRole;

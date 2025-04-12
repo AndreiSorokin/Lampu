@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Body,
   Controller,
@@ -7,12 +8,13 @@ import {
   NotFoundException,
   Param,
   Post,
+  UnauthorizedException,
   UseGuards,
+  Headers,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { CreateUserDto } from '../dtos/user/user.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from './current-user.decorator';
 import { UpdatePasswordDto } from '../dtos/user/update-password.dto';
 import { UserRole } from './user-role.enum';
@@ -20,6 +22,8 @@ import { Roles } from './roles.decorator';
 import { UpdateRoleDto } from '../dtos/user/update-role.dto';
 import { ForgotPasswordDto } from '../dtos/user/forgot-password.dto';
 import { ResetPasswordDto } from '../dtos/user/reset-password.dto';
+import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
+import * as admin from 'firebase-admin';
 
 @Controller('users')
 export class UsersController {
@@ -39,7 +43,7 @@ export class UsersController {
   }
 
   @Post('toggle-member/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   @Roles(UserRole.ADMIN)
   async toggleMember(
     @Param('id') id: string,
@@ -49,7 +53,7 @@ export class UsersController {
   }
 
   @Post('update-password')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   async updatePassword(
     @CurrentUser() user: User,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -70,8 +74,30 @@ export class UsersController {
   }
   @Post()
   @HttpCode(201)
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(createUserDto);
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+    @Headers('authorization') authHeader: string,
+  ) {
+    const token = authHeader?.split('Bearer ')[1];
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
+    }
+
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(token);
+
+      if (decodedToken.uid !== createUserDto.firebaseUid) {
+        throw new UnauthorizedException('Invalid token: UID mismatch');
+      }
+
+      if (decodedToken.email !== createUserDto.email) {
+        throw new UnauthorizedException('Email mismatch');
+      }
+
+      return this.usersService.createUser(createUserDto);
+    } catch {
+      throw new UnauthorizedException('Token verification failed');
+    }
   }
 
   @Get()

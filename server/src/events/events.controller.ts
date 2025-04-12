@@ -15,7 +15,6 @@ import { EventsService } from './events.service';
 import { Event } from './event.entity';
 import { CreateEventDto } from '../dtos/event/event.dto';
 import { UpdateEventDto } from '../dtos/event/update-event.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { CurrentUser } from '../users/current-user.decorator';
 import { User } from '../users/user.entity';
 import { RolesGuard } from '../users/roles.guard';
@@ -23,13 +22,14 @@ import { Roles } from '../users/roles.decorator';
 import { UserRole } from '../users/user-role.enum';
 import { UserResponseDto } from '../dtos/user/user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post(':eventId/add-to-cart')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   async addToCart(
     @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
@@ -38,7 +38,7 @@ export class EventsController {
   }
 
   @Delete(':eventId')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async deleteEvent(
     @Param('eventId', ParseUUIDPipe) eventId: string,
@@ -47,7 +47,7 @@ export class EventsController {
   }
 
   @Delete(':eventId/remove-from-cart')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   async removeFromCart(
     @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
@@ -56,7 +56,7 @@ export class EventsController {
   }
 
   @Get('cart')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(FirebaseAuthGuard)
   async getCart(@CurrentUser() user: User): Promise<Event[]> {
     return this.eventsService.getCart(user);
   }
@@ -76,7 +76,7 @@ export class EventsController {
   }
 
   @Post()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async createEvent(
@@ -87,7 +87,7 @@ export class EventsController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async updateEvent(
     @Param('id') id: string,

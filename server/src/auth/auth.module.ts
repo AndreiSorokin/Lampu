@@ -5,6 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
+import { FirebaseModule } from '../firebase/firebase.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ConfigService } from '@nestjs/config';
       },
       inject: [ConfigService],
     }),
+    FirebaseModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
