@@ -5,11 +5,13 @@ import React, { useState } from 'react'
 import { auth } from 'src/utils/firebaseConfig';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RegisterFormData, registerSchema } from 'src/zod/zod.schemas';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { RootStackParamList } from 'src/navigation/AppNavigator';
 import { UserRole } from 'src/types/users';
+import Input from 'src/components/Input';
+import CustomButton from 'src/components/CustomButton';
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 
@@ -17,6 +19,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
   const initialValues: RegisterFormData = {
     email: '',
     password: '',
+    confirmPassword: '',
     name: '',
     dateOfBirth: '',
     instagram: '',
@@ -94,86 +97,87 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
         validationSchema={toFormikValidationSchema(registerSchema)}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
+        {({ handleChange, handleSubmit, values, errors, touched, isSubmitting }) => (
           <View>
             {generalError && <Text style={styles.error}>{generalError}</Text>}
-            <TextInput
-              style={styles.input}
+            <Input
               placeholder="Email"
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
               value={values.email}
-              autoCapitalize="none"
+              onChangeText={handleChange('email')}
               editable={!isSubmitting}
             />
             {touched.email && errors.email && (
               <Text style={styles.error}>{errors.email}</Text>
             )}
-            <TextInput
-              style={styles.input}
+            <Input
               placeholder="Password"
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
               value={values.password}
+              onChangeText={handleChange('password')}
               secureTextEntry
               editable={!isSubmitting}
             />
             {touched.password && errors.password && (
               <Text style={styles.error}>{errors.password}</Text>
             )}
-            <TextInput
-              style={styles.input}
-              placeholder="Name (optional)"
-              onChangeText={handleChange('name')}
-              onBlur={handleBlur('name')}
-              value={values.name}
+            <Input
+              placeholder="Confirm password"
+              value={values.confirmPassword}
+              onChangeText={handleChange('confirmPassword')}
+              secureTextEntry
               editable={!isSubmitting}
             />
-            {touched.name && errors.name && (
-              <Text style={styles.error}>{errors.name}</Text>
+            {touched.confirmPassword && errors.confirmPassword && (
+              <Text style={styles.error}>{errors.confirmPassword}</Text>
             )}
-            <TextInput
-              style={styles.input}
-              placeholder="Date of Birth (YYYY-MM-DD, optional)"
-              onChangeText={handleChange('dateOfBirth')}
-              onBlur={handleBlur('dateOfBirth')}
+            <Input
+              placeholder="Date of Birth"
               value={values.dateOfBirth}
+              onChangeText={handleChange('dateOfBirth')}
+              secureTextEntry
               editable={!isSubmitting}
             />
             {touched.dateOfBirth && errors.dateOfBirth && (
               <Text style={styles.error}>{errors.dateOfBirth}</Text>
             )}
-            <TextInput
-              style={styles.input}
+            <Input
+              placeholder="Name (optional)"
+              value={values.name}
+              onChangeText={handleChange('name')}
+              secureTextEntry
+              editable={!isSubmitting}
+            />
+            {touched.name && errors.name && (
+              <Text style={styles.error}>{errors.name}</Text>
+            )}
+            <Input
               placeholder="Instagram (optional)"
               onChangeText={handleChange('instagram')}
-              onBlur={handleBlur('instagram')}
               value={values.instagram}
               editable={!isSubmitting}
             />
             {touched.instagram && errors.instagram && (
               <Text style={styles.error}>{errors.instagram}</Text>
             )}
-            <TextInput
-              style={styles.input}
+            <Input
               placeholder="Telegram (optional)"
               onChangeText={handleChange('telegram')}
-              onBlur={handleBlur('telegram')}
               value={values.telegram}
               editable={!isSubmitting}
             />
             {touched.telegram && errors.telegram && (
               <Text style={styles.error}>{errors.telegram}</Text>
             )}
-            <Button
+            <CustomButton
               title={isSubmitting ? 'Registering...' : 'Register'}
               onPress={() => handleSubmit()}
               disabled={isSubmitting || !!Object.keys(errors).length}
+              style={{justifyContent: 'center', alignItems: 'center'}}
             />
-            <Button
-              title="Already have an account? Login"
+            <CustomButton
+              title="Already have an account?"
               onPress={() => navigation.navigate('Login')}
               disabled={isSubmitting}
+              style={{justifyContent: 'center', alignItems: 'center'}}
             />
           </View>
         )}
@@ -183,10 +187,10 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
 }
 
 const styles = StyleSheet.create({
-   container: { flex: 1, justifyContent: 'center', padding: 20 },
-   title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
-   input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
-   error: { color: 'red', marginBottom: 10 },
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
+  input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
+  error: { color: 'red', marginBottom: 10 },
 });
 
 export default Register

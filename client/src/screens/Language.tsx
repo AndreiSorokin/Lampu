@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react'
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, SafeAreaView, StyleSheet } from 'react-native';
+import CustomButton from 'src/components/CustomButton';
+import CustomButtonDark from 'src/components/CustomButtonDark';
 import { setAppLanguage } from 'src/utils/language';
 
 const Language = () => {
@@ -9,16 +11,44 @@ const Language = () => {
       await setAppLanguage(lang);
       navigation.navigate('Tervetuloa');
    };
+   
    return (
-      <View>
-         <Text></Text>
-         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Button title="Suomi" onPress={() => selectLanguage('fi')} />
-            <Button title="English" onPress={() => selectLanguage('en')} />
-            <Button title="Русский" onPress={() => selectLanguage('ru')} />
-         </View>
-      </View>
-   )
+      <SafeAreaView style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>Select Language</Text>
+          <CustomButtonDark 
+            title="Suomi"
+            onPress={() => selectLanguage('fi')}
+          />
+          <CustomButton 
+            title="Русский"
+            onPress={() => selectLanguage('ru')}
+          />
+          <CustomButton 
+            title="English"
+            onPress={() => selectLanguage('en')}
+          />
+        </View>
+      </SafeAreaView>
+    );
 }
+
+const styles = StyleSheet.create({
+   container: {
+     flex: 1,
+   },
+   content: {
+     flex: 1,
+     justifyContent: 'center',
+     alignItems: 'center',
+     padding: 20,
+   },
+   title: {
+     fontSize: 24,
+     fontWeight: 'bold',
+     marginBottom: 20,
+     textAlign: 'center',
+   },
+ });
 
 export default Language

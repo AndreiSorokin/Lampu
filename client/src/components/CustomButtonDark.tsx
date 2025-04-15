@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, GestureResponderEvent, ViewStyle } from 'react-native';
 
-interface CustomButtonProps {
+interface CustomButtonDarkProps {
    title: string;
    onPress: (event: GestureResponderEvent) => void;
    style?: ViewStyle;
@@ -9,7 +9,7 @@ interface CustomButtonProps {
    disabled?: boolean;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({
+const CustomButtonDark: React.FC<CustomButtonDarkProps> = ({
    title,
    onPress,
    style,
@@ -29,7 +29,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
 const styles = StyleSheet.create({
    button: {
-      backgroundColor: '#FF9A42',
+      backgroundColor: '#FF8011',
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 50,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
    },
    buttonText: {
       fontFamily: 'Montserrat-VariableFont',
-      color: '#131212',
+      color: '#FFF6E5',
       fontWeight: 'bold',
       fontSize: 18,
    },
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
    },
 });
 
-export default CustomButton;
+export default CustomButtonDark;

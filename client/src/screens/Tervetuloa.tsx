@@ -3,6 +3,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from 'src/navigation/AppNavigator';
 import CustomButton from 'src/components/CustomButton';
 import { useTranslation } from 'react-i18next';
+import CustomButtonDark from 'src/components/CustomButtonDark';
 
 type TervetuloaScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -12,7 +13,7 @@ const Tervetuloa = ({ navigation }: { navigation: TervetuloaScreenNavigationProp
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <Text>{t('welcome')}</Text>
-      <CustomButton 
+      <CustomButtonDark 
         title={t('login')}
         onPress={() => navigation.navigate('Login')}
       />
