@@ -8,6 +8,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../utils/firebaseConfig';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/AppNavigator';
+import Input from 'src/components/Input';
+import CustomButton from 'src/components/CustomButton';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -18,7 +20,7 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
     input: { borderWidth: 1, padding: 10, marginBottom: 10, borderRadius: 5 },
     error: { color: 'red', marginBottom: 10 },
   });
-
+  
   const initialValues: LoginFormData = {
     email: '',
     password: '',
@@ -50,25 +52,21 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
         validationSchema={toFormikValidationSchema(loginSchema)}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+        {({ handleChange, handleSubmit, values, errors, touched }) => (
           <View>
-            <TextInput
-              style={styles.input}
+            <Input
               placeholder="Email"
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
               value={values.email}
-              autoCapitalize="none"
+              onChangeText={handleChange('email')}
             />
             {touched.email && errors.email && (
               <Text style={styles.error}>{errors.email}</Text>
             )}
 
-            <TextInput
+            <Input
               style={styles.input}
               placeholder="Password"
               onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
               value={values.password}
               secureTextEntry
             />
@@ -76,10 +74,15 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
               <Text style={styles.error}>{errors.password}</Text>
             )}
 
-            <Button title="Login" onPress={() => handleSubmit()} />
-            <Button
+            <CustomButton 
+              title="Login" 
+              onPress={() => handleSubmit()}
+              style={{justifyContent: 'center', alignItems: 'center'}}
+            />
+            <CustomButton
               title="Need an account? Register"
               onPress={() => navigation.navigate('Register')}
+              style={{justifyContent: 'center', alignItems: 'center'}}
             />
           </View>
         )}

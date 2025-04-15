@@ -12,6 +12,8 @@ import { View, Text } from 'react-native';
 import Register from 'src/screens/user/Register';
 import Enrollments from 'src/screens/event/Enrollments';
 import Language from 'src/screens/Language';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from 'src/utils/firebaseConfig';
 
 export type RootStackParamList = {
   Events: undefined;
@@ -53,6 +55,7 @@ function AuthStack() {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
       <Stack.Screen name="Events" component={Events} options={{ headerShown: false }}/>
+      <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 }
@@ -84,7 +87,7 @@ export default function AppNavigator() {
   }
 
   return isLoggedIn ? (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
       <Tab.Screen name="Enrollments" component={Enrollments}/>
       <Tab.Screen name="Profile" component={Profile} />

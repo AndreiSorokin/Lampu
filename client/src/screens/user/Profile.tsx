@@ -1,13 +1,17 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react'
 import { View, Text, Button } from 'react-native'
+import { auth } from 'src/utils/firebaseConfig';
+
 
 const Profile = () => {
-  const logOut = () => {
+  const logOut = async() => {
     try {
-      localStorage.removeItem("userData")
-      localStorage.removeItem("userToken")
+      await auth.signOut();
+      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userData');
     } catch (error) {
-      console.error(error)
+      console.error('Logout error:', error);
     }
   }
   return (
@@ -15,7 +19,10 @@ const Profile = () => {
       <Text>Profile</Text>
       <Text>Membership</Text>
       <Text>Language</Text>
-      <Button onPress={logOut}>Sign out</Button>
+      <Button
+        title='Log out'
+        onPress={logOut}
+      />
     </View>
   )
 }
