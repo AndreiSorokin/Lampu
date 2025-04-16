@@ -28,6 +28,24 @@ import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
+  @Post(':eventId/like')
+  @UseGuards(FirebaseAuthGuard)
+  async likeEvent(
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+    @CurrentUser() user: User,
+  ): Promise<UserResponseDto> {
+    return await this.eventsService.likeEvent(user, eventId);
+  }
+
+  @Delete(':eventId/like')
+  @UseGuards(FirebaseAuthGuard, RolesGuard)
+  async unlikeEvent(
+    @Param('eventId', ParseUUIDPipe) eventId: string,
+    @CurrentUser() user: User,
+  ): Promise<UpdateEventDto> {
+    return await this.eventsService.unlikeEvent(user, eventId);
+  }
+
   @Post(':eventId/add-to-cart')
   @UseGuards(FirebaseAuthGuard)
   async addToCart(

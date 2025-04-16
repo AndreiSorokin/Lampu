@@ -1,6 +1,11 @@
 # Lampu
 
 ## BackEnd:
+Test change user info
+Test change event info (img)
+Test likes as cart
+Test user status on event
+
 Change verificationLink
 Change appDeepLink`
 

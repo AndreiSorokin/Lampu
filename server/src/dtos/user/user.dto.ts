@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   IsString,
   IsNotEmpty,
@@ -80,10 +84,15 @@ export class UserResponseDto {
 
   @Expose()
   @Transform(({ value }) =>
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
     value.map((event: any) => ({ id: event.id, name: event.name })),
   )
   cart!: { id: string; name: string }[];
+
+  @Expose()
+  @Transform(({ value }) =>
+    value.map((event: any) => ({ id: event.id, name: event.name })),
+  )
+  likes!: { id: string; name: string }[];
 
   @Exclude()
   password!: string;

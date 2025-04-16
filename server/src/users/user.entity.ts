@@ -41,6 +41,10 @@ export class User {
   @JoinTable()
   cart!: Event[];
 
+  @ManyToMany(() => Event, (event) => event.likedByUsers, { cascade: true })
+  @JoinTable()
+  likes!: Event[];
+
   @Column({ type: 'varchar', nullable: true })
   resetToken!: string | null;
 

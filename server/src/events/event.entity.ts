@@ -32,4 +32,7 @@ export class Event {
 
   @ManyToMany(() => User, (user) => user.cart, { onDelete: 'CASCADE' })
   enrolledUsers!: User[];
+
+  @ManyToMany(() => User, (user) => user.likes, { onDelete: 'CASCADE' })
+  likedByUsers!: User[];
 }
