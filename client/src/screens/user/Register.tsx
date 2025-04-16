@@ -2,14 +2,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import React, { useState } from 'react'
-import { auth } from 'src/utils/firebaseConfig';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RegisterFormData, registerSchema } from 'src/zod/zod.schemas';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { format } from 'date-fns';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+
+import { auth } from 'src/utils/firebaseConfig';
 import { RootStackParamList } from 'src/navigation/AppNavigator';
 import { UserRole } from 'src/types/users';
+import { RegisterFormData, registerSchema } from 'src/zod/zod.schemas';
 import Input from 'src/components/Input';
 import CustomButton from 'src/components/CustomButton';
 
@@ -27,6 +30,10 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
   };
 
   const [generalError, setGeneralError] = useState<string | null>(null);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
 
   const handleSubmit = async (
     values: RegisterFormData,
@@ -97,90 +104,99 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
         validationSchema={toFormikValidationSchema(registerSchema)}
         onSubmit={handleSubmit}
       >
-        {({ handleChange, handleSubmit, values, errors, touched, isSubmitting }) => (
-          <View>
-            {generalError && <Text style={styles.error}>{generalError}</Text>}
-            <Input
-              placeholder="Email"
-              value={values.email}
-              onChangeText={handleChange('email')}
-              editable={!isSubmitting}
-            />
-            {touched.email && errors.email && (
-              <Text style={styles.error}>{errors.email}</Text>
-            )}
-            <Input
-              placeholder="Password"
-              value={values.password}
-              onChangeText={handleChange('password')}
-              secureTextEntry
-              editable={!isSubmitting}
-            />
-            {touched.password && errors.password && (
-              <Text style={styles.error}>{errors.password}</Text>
-            )}
-            <Input
-              placeholder="Confirm password"
-              value={values.confirmPassword}
-              onChangeText={handleChange('confirmPassword')}
-              secureTextEntry
-              editable={!isSubmitting}
-            />
-            {touched.confirmPassword && errors.confirmPassword && (
-              <Text style={styles.error}>{errors.confirmPassword}</Text>
-            )}
-            <Input
-              placeholder="Date of Birth"
-              value={values.dateOfBirth}
-              onChangeText={handleChange('dateOfBirth')}
-              secureTextEntry
-              editable={!isSubmitting}
-            />
-            {touched.dateOfBirth && errors.dateOfBirth && (
-              <Text style={styles.error}>{errors.dateOfBirth}</Text>
-            )}
-            <Input
-              placeholder="Name (optional)"
-              value={values.name}
-              onChangeText={handleChange('name')}
-              secureTextEntry
-              editable={!isSubmitting}
-            />
-            {touched.name && errors.name && (
-              <Text style={styles.error}>{errors.name}</Text>
-            )}
-            <Input
-              placeholder="Instagram (optional)"
-              onChangeText={handleChange('instagram')}
-              value={values.instagram}
-              editable={!isSubmitting}
-            />
-            {touched.instagram && errors.instagram && (
-              <Text style={styles.error}>{errors.instagram}</Text>
-            )}
-            <Input
-              placeholder="Telegram (optional)"
-              onChangeText={handleChange('telegram')}
-              value={values.telegram}
-              editable={!isSubmitting}
-            />
-            {touched.telegram && errors.telegram && (
-              <Text style={styles.error}>{errors.telegram}</Text>
-            )}
-            <CustomButton
-              title={isSubmitting ? 'Registering...' : 'Register'}
-              onPress={() => handleSubmit()}
-              disabled={isSubmitting || !!Object.keys(errors).length}
-              style={{justifyContent: 'center', alignItems: 'center'}}
-            />
-            <CustomButton
-              title="Already have an account?"
-              onPress={() => navigation.navigate('Login')}
-              disabled={isSubmitting}
-              style={{justifyContent: 'center', alignItems: 'center'}}
-            />
-          </View>
-        )}
+        {({ handleChange, handleSubmit, values, errors, touched, isSubmitting }) => {
+          const handleConfirm = (date: Date) => {
+            handleChange('dateOfBirth')(format(date, 'yyyy-MM-dd'));
+            hideDatePicker();
+          };
+
+          return (
+            <View>
+              {generalError && <Text style={styles.error}>{generalError}</Text>}
+              <Input
+                placeholder="Email"
+                value={values.email}
+                onChangeText={handleChange('email')}
+                editable={!isSubmitting}
+              />
+              {touched.email && errors.email && (
+                <Text style={styles.error}>{errors.email}</Text>
+              )}
+              <Input
+                placeholder="Password"
+                value={values.password}
+                onChangeText={handleChange('password')}
+                secureTextEntry
+                editable={!isSubmitting}
+              />
+              {touched.password && errors.password && (
+                <Text style={styles.error}>{errors.password}</Text>
+              )}
+              <Input
+                placeholder="Confirm password"
+                value={values.confirmPassword}
+                onChangeText={handleChange('confirmPassword')}
+                secureTextEntry
+                editable={!isSubmitting}
+              />
+              {touched.confirmPassword && errors.confirmPassword && (
+                <Text style={styles.error}>{errors.confirmPassword}</Text>
+              )}
+              <Pressable onPress={showDatePicker} style={[styles.input, { justifyContent: 'center' }]}>
+                <Text>{values.dateOfBirth || 'Select Date of Birth'}</Text>
+              </Pressable>
+              {touched.dateOfBirth && errors.dateOfBirth && (
+                <Text style={styles.error}>{errors.dateOfBirth}</Text>
+              )}
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+                maximumDate={new Date()}
+              />
+              <Input
+                placeholder="Name (optional)"
+                value={values.name}
+                onChangeText={handleChange('name')}
+                editable={!isSubmitting}
+              />
+              {touched.name && errors.name && (
+                <Text style={styles.error}>{errors.name}</Text>
+              )}
+              <Input
+                placeholder="Instagram (optional)"
+                onChangeText={handleChange('instagram')}
+                value={values.instagram}
+                editable={!isSubmitting}
+              />
+              {touched.instagram && errors.instagram && (
+                <Text style={styles.error}>{errors.instagram}</Text>
+              )}
+              <Input
+                placeholder="Telegram (optional)"
+                onChangeText={handleChange('telegram')}
+                value={values.telegram}
+                editable={!isSubmitting}
+              />
+              {touched.telegram && errors.telegram && (
+                <Text style={styles.error}>{errors.telegram}</Text>
+              )}
+              <CustomButton
+                title={isSubmitting ? 'Registering...' : 'Register'}
+                onPress={() => handleSubmit()}
+                disabled={isSubmitting || !!Object.keys(errors).length}
+                style={{ justifyContent: 'center', alignItems: 'center' }}
+              />
+              <CustomButton
+                title="Already have an account?"
+                onPress={() => navigation.navigate('Login')}
+                disabled={isSubmitting}
+                style={{ justifyContent: 'center', alignItems: 'center' }}
+              />
+            </View>
+          );
+        }}
       </Formik>
     </View>
   );

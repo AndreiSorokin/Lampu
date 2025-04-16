@@ -14,6 +14,7 @@ import { User } from './user.entity';
 import { UserRole } from './user-role.enum';
 import { CreateUserDto } from '../dtos/user/user.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateUserDto } from '../dtos/user/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -138,7 +139,6 @@ export class UsersService {
   ): Promise<User> {
     try {
       const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-      console.log('Password comparison result:', isPasswordValid);
       if (!isPasswordValid) {
         throw new UnauthorizedException('Old password is incorrect');
       }
@@ -156,6 +156,21 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async updateUser(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+    try {
+      const newUser = {
+        ...user,
+        ...updateUserDto,
+      };
+      return await this.usersRepository.save(newUser);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update user');
+    }
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
