@@ -9,6 +9,7 @@ import { EventsModule } from './events/events.module';
 import { Event } from './events/event.entity';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { Enrollment } from './enrollments/enrollment.entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [User, Event],
+        entities: [User, Event, Enrollment],
         synchronize: true,
       }),
       inject: [ConfigService],

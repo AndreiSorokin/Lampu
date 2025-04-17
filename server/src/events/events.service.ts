@@ -22,7 +22,7 @@ import { CreateEventDto } from '../dtos/event/event.dto';
 import { UpdateEventDto } from '../dtos/event/update-event.dto';
 import { UserResponseDto } from '../dtos/user/user.dto';
 import { plainToClass } from 'class-transformer';
-import { Enrollment } from '../enrollments/Enrollment.entity';
+import { Enrollment } from '../enrollments/enrollment.entity';
 
 @Injectable()
 export class EventsService {

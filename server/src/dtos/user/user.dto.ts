@@ -82,12 +82,6 @@ export class UserResponseDto {
   @Expose()
   telegram?: string;
 
-  // @Expose()
-  // @Transform(({ value }) =>
-  //   value.map((event: any) => ({ id: event.id, name: event.name })),
-  // )
-  // cart!: { id: string; name: string }[];
-
   @Expose()
   @Transform(({ obj }) =>
     obj.enrollments

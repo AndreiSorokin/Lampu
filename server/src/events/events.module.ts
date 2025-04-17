@@ -6,9 +6,14 @@ import { Event } from './event.entity';
 import { User } from '../users/user.entity';
 import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
 import { FirebaseModule } from '../firebase/firebase.module';
+import { EnrollmentsModule } from '../enrollments/enrollment.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, User]), FirebaseModule],
+  imports: [
+    TypeOrmModule.forFeature([Event, User]),
+    EnrollmentsModule,
+    FirebaseModule,
+  ],
   providers: [EventsService, FirebaseAuthGuard],
   controllers: [EventsController],
 })
