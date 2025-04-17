@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Event } from '../events/event.entity';
 import { UserRole } from './user-role.enum';
+import { Enrollment } from '../enrollments/Enrollment.entity';
 
 @Entity()
 export class User {
@@ -37,9 +39,12 @@ export class User {
   @Column({ nullable: true })
   telegram?: string;
 
-  @ManyToMany(() => Event, (event) => event.enrolledUsers, { cascade: true })
-  @JoinTable()
-  cart!: Event[];
+  // @ManyToMany(() => Event, (event) => event.enrolledUsers, { cascade: true })
+  // @JoinTable()
+  // cart!: Event[];
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.user)
+  enrollments!: Enrollment[];
 
   @ManyToMany(() => Event, (event) => event.likedByUsers, { cascade: true })
   @JoinTable()

@@ -183,7 +183,6 @@ export class UsersService {
     user.role = createUserDto.role || UserRole.USER;
     user.instagram = createUserDto.instagram;
     user.telegram = createUserDto.telegram;
-    user.cart = [];
     user.resetToken = null;
     user.resetTokenExpiration = null;
 
@@ -197,7 +196,7 @@ export class UsersService {
   async findOne(id: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['cart'],
+      relations: ['enrollments'],
       select: ['id', 'email', 'password', 'role', 'name'],
     });
     return user;

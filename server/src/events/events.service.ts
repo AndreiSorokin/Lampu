@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   Injectable,
   BadRequestException,
@@ -21,6 +22,7 @@ import { CreateEventDto } from '../dtos/event/event.dto';
 import { UpdateEventDto } from '../dtos/event/update-event.dto';
 import { UserResponseDto } from '../dtos/user/user.dto';
 import { plainToClass } from 'class-transformer';
+import { Enrollment } from '../enrollments/Enrollment.entity';
 
 @Injectable()
 export class EventsService {
@@ -32,6 +34,8 @@ export class EventsService {
     private eventsRepository: Repository<Event>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Enrollment)
+    private readonly enrollmentRepository: Repository<Enrollment>,
   ) {
     const region = process.env.AWS_REGION;
     const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -60,7 +64,7 @@ export class EventsService {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id },
-        relations: ['enrolledUsers'],
+        relations: ['enrollments'],
       });
       if (!event) {
         throw new NotFoundException(`Event with ID ${id} not found`);
@@ -203,7 +207,8 @@ export class EventsService {
         throw new BadRequestException('User not found');
       }
 
-      fullUser.likes = fullUser.likes?.filter((event) => event.id !== eventId) || [];
+      fullUser.likes =
+        fullUser.likes?.filter((event) => event.id !== eventId) || [];
       const savedUser = await this.usersRepository.save(fullUser);
 
       return plainToClass(UserResponseDto, savedUser, {
@@ -214,20 +219,19 @@ export class EventsService {
     }
   }
 
-  async bookEvent(user: User, eventId: string): Promise<Event> {
+  //TODO:
+  async addToEnrollments(user: User, eventId: string): Promise<Event> {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id: eventId },
-        relations: ['enrolledUsers'],
+        relations: ['enrollments', 'enrollments.user'],
       });
 
       if (!user || !event) {
         throw new BadRequestException('User or Event not found');
       }
 
-      const currentEnrollment = event.enrolledUsers
-        ? event.enrolledUsers.length
-        : 0;
+      const currentEnrollment = event.enrollments.length;
 
       if (currentEnrollment >= event.capacity) {
         throw new BadRequestException('Event is at full capacity');
@@ -239,14 +243,23 @@ export class EventsService {
         );
       }
 
-      event.enrolledUsers = event.enrolledUsers || [];
-      if (!event.enrolledUsers.some((u) => u.id === user.id)) {
-        event.enrolledUsers.push(user);
+      const alreadyEnrolled = event.enrollments.some(
+        (enrollment) => enrollment.user.id === user.id,
+      );
+
+      if (alreadyEnrolled) {
+        return event;
       }
 
-      const savedEvent = await this.eventsRepository.save(event);
+      const enrollment = this.enrollmentRepository.create({
+        user,
+        event,
+        attended: false,
+      });
 
-      return savedEvent;
+      await this.enrollmentRepository.save(enrollment);
+
+      return event;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -254,81 +267,52 @@ export class EventsService {
       throw new InternalServerErrorException('Failed to book event');
     }
   }
-  async addToCart(user: User, eventId: string): Promise<UserResponseDto> {
+  async removeFromEnrollments(
+    user: User,
+    eventId: string,
+  ): Promise<UserResponseDto> {
     try {
-      const event = await this.bookEvent(user, eventId);
+      const enrollment = await this.enrollmentRepository.findOne({
+        where: {
+          user: { id: user.id },
+          event: { id: eventId },
+        },
+        relations: ['user', 'event'],
+      });
 
-      user.cart = user.cart || [];
-      if (!user.cart.some((e) => e.id === eventId)) {
-        user.cart.push(event);
+      if (!enrollment) {
+        throw new BadRequestException('Enrollment not found');
       }
 
-      const savedUser = await this.usersRepository.save(user);
+      await this.enrollmentRepository.remove(enrollment);
 
-      return plainToClass(UserResponseDto, savedUser, {
+      const freshUser = await this.usersRepository.findOne({
+        where: { id: user.id },
+        relations: ['enrollments', 'enrollments.event', 'likes'],
+      });
+
+      return plainToClass(UserResponseDto, freshUser!, {
         excludeExtraneousValues: true,
       });
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Failed to add event to cart');
+      if (error instanceof BadRequestException) throw error;
+      throw new InternalServerErrorException('Failed to remove enrollment');
     }
   }
 
-  async removeFromCart(user: User, eventId: string): Promise<UserResponseDto> {
+  async getEnrollments(user: User): Promise<Event[]> {
     try {
-      const freshUser = await this.usersRepository.findOne({
-        where: { id: user.id },
-        relations: ['cart'],
+      const enrollments = await this.enrollmentRepository.find({
+        where: { user: { id: user.id }, attended: false },
+        relations: ['event'],
       });
-      if (!freshUser) {
-        throw new BadRequestException('User not found');
-      }
 
-      const event = await this.eventsRepository.findOne({
-        where: { id: eventId },
-        relations: ['enrolledUsers'],
-      });
-      if (!event) {
-        throw new BadRequestException('Event not found');
-      }
-
-      event.enrolledUsers =
-        event.enrolledUsers?.filter((u) => u.id !== user.id) || [];
-      await this.eventsRepository.save(event);
-
-      freshUser.cart = freshUser.cart?.filter((e) => e.id !== eventId) || [];
-      const savedUser = await this.usersRepository.save(freshUser);
-
-      return plainToClass(UserResponseDto, savedUser, {
-        excludeExtraneousValues: true,
-      });
+      return enrollments.map((e) => e.event);
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(
-        'Failed to remove event from cart',
-      );
-    }
-  }
-
-  async getCart(user: User): Promise<Event[]> {
-    try {
-      const freshUser = await this.usersRepository.findOne({
-        where: { id: user.id },
-        relations: ['cart'],
-      });
-      if (!freshUser) {
-        throw new BadRequestException('User not found');
-      }
-      return freshUser.cart || [];
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Failed to retrieve cart');
+      throw new InternalServerErrorException('Failed to retrieve enrollments');
     }
   }
 

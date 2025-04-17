@@ -82,11 +82,22 @@ export class UserResponseDto {
   @Expose()
   telegram?: string;
 
+  // @Expose()
+  // @Transform(({ value }) =>
+  //   value.map((event: any) => ({ id: event.id, name: event.name })),
+  // )
+  // cart!: { id: string; name: string }[];
+
   @Expose()
-  @Transform(({ value }) =>
-    value.map((event: any) => ({ id: event.id, name: event.name })),
+  @Transform(({ obj }) =>
+    obj.enrollments
+      ?.filter((enrollment: any) => !enrollment.attended)
+      .map((enrollment: any) => ({
+        id: enrollment.event.id,
+        name: enrollment.event.name,
+      })),
   )
-  cart!: { id: string; name: string }[];
+  enrollments!: { id: string; name: string }[];
 
   @Expose()
   @Transform(({ value }) =>

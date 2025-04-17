@@ -10,5 +10,5 @@ export type Event = {
    target?: UserRole;
    capacity: number;
    imageUrl?: string;
-   enrolledUsers: User[];
+   enrollments: User[];
 }

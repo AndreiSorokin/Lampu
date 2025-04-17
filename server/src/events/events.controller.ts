@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Controller,
   Post,
@@ -46,13 +48,13 @@ export class EventsController {
     return await this.eventsService.unlikeEvent(user, eventId);
   }
 
-  @Post(':eventId/add-to-cart')
+  @Post(':eventId/enroll')
   @UseGuards(FirebaseAuthGuard)
-  async addToCart(
+  async enrollInEvent(
     @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
-  ): Promise<UserResponseDto> {
-    return await this.eventsService.addToCart(user, eventId);
+  ): Promise<Event> {
+    return await this.eventsService.addToEnrollments(user, eventId);
   }
 
   @Delete(':eventId')
@@ -64,19 +66,19 @@ export class EventsController {
     await this.eventsService.deleteEvent(eventId);
   }
 
-  @Delete(':eventId/remove-from-cart')
+  @Delete(':eventId/remove-from-enrollments')
   @UseGuards(FirebaseAuthGuard)
-  async removeFromCart(
+  async removeFromEnrollments(
     @Param('eventId', ParseUUIDPipe) eventId: string,
     @CurrentUser() user: User,
   ): Promise<UserResponseDto> {
-    return await this.eventsService.removeFromCart(user, eventId);
+    return await this.eventsService.removeFromEnrollments(user, eventId);
   }
 
-  @Get('cart')
+  @Get('enrollments')
   @UseGuards(FirebaseAuthGuard)
-  async getCart(@CurrentUser() user: User): Promise<Event[]> {
-    return this.eventsService.getCart(user);
+  async getEnrollments(@CurrentUser() user: User): Promise<Event[]> {
+    return this.eventsService.getEnrollments(user);
   }
 
   @Get()

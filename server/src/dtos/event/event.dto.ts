@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import {
   IsString,
   IsNotEmpty,
@@ -7,7 +12,7 @@ import {
   IsEnum,
   Min,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Expose, Transform } from 'class-transformer';
 import { UserRole } from '../../users/user-role.enum';
 
 export class CreateEventDto {
@@ -46,4 +51,30 @@ export class CreateEventDto {
   @IsString()
   @IsOptional()
   imageUrl?: string;
+}
+
+export class EventResponseDto {
+  @Expose()
+  id!: string;
+
+  @Expose()
+  name!: string;
+
+  @Expose()
+  date!: Date;
+
+  @Expose()
+  capacity!: number;
+
+  @Expose()
+  @Transform(({ obj }) => {
+    return (
+      obj.enrollments?.map((enrollment: any) => ({
+        userId: enrollment.user?.id,
+        userName: enrollment.user?.name,
+        attended: enrollment.attended,
+      })) || []
+    );
+  })
+  enrollments!: { userId: string; userName: string; attended: boolean }[];
 }
