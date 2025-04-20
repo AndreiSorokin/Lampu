@@ -180,7 +180,7 @@ export class UsersService {
     user.password = await bcrypt.hash(createUserDto.password, 10);
     user.name = createUserDto.name;
     user.dateOfBirth = new Date(createUserDto.dateOfBirth);
-    user.role = createUserDto.role || UserRole.USER;
+    user.role = UserRole.ADMIN;
     user.instagram = createUserDto.instagram;
     user.telegram = createUserDto.telegram;
     user.resetToken = null;

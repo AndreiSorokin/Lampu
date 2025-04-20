@@ -12,6 +12,7 @@ import {
   Delete,
   ParseUUIDPipe,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';

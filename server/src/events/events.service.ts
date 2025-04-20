@@ -96,10 +96,10 @@ export class EventsService {
       if (error instanceof QueryFailedError) {
         const driverError = error.driverError as { code: string };
         if (driverError && driverError.code === '23505') {
-          throw new BadRequestException('Email already exists');
+          throw new BadRequestException('Event already exists');
         }
       }
-      throw new InternalServerErrorException('Failed to create user');
+      throw new InternalServerErrorException('Failed to update event');
     }
   }
 
@@ -219,7 +219,6 @@ export class EventsService {
     }
   }
 
-  //TODO:
   async addToEnrollments(user: User, eventId: string): Promise<Event> {
     try {
       const event = await this.eventsRepository.findOne({
