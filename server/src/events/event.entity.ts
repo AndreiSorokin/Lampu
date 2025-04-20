@@ -1,6 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 import { User } from '../users/user.entity';
 import { UserRole } from '../users/user-role.enum';
+import { Enrollment } from '../enrollments/enrollment.entity';
 @Entity()
 export class Event {
   @PrimaryGeneratedColumn('uuid')
@@ -30,6 +37,9 @@ export class Event {
   @Column({ nullable: true })
   imageUrl?: string;
 
-  @ManyToMany(() => User, (user) => user.cart, { onDelete: 'CASCADE' })
-  enrolledUsers!: User[];
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.event)
+  enrollments!: Enrollment[];
+
+  @ManyToMany(() => User, (user) => user.likes, { onDelete: 'CASCADE' })
+  likedByUsers!: User[];
 }

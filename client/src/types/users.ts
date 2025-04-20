@@ -14,5 +14,5 @@ export type User = {
    role: UserRole;
    instagram?: string;
    telegram?: string;
-   cart: Event[];
+   enrollments: Event[];
 }

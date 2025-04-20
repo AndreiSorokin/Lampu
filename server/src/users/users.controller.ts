@@ -11,6 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
   Headers,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -24,10 +25,28 @@ import { ForgotPasswordDto } from '../dtos/user/forgot-password.dto';
 import { ResetPasswordDto } from '../dtos/user/reset-password.dto';
 import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
 import * as admin from 'firebase-admin';
+import { UpdateUserDto } from '../dtos/user/update-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Put('update')
+  @UseGuards(FirebaseAuthGuard)
+  async updateUser(
+    @CurrentUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    try {
+      const fullUser = await this.usersService.findOne(user.id);
+      if (!fullUser) {
+        throw new NotFoundException('User not found');
+      }
+      return await this.usersService.updateUser(fullUser, updateUserDto);
+    } catch {
+      throw new InternalServerErrorException('Failed to update user');
+    }
+  }
 
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {

@@ -14,6 +14,7 @@ import { User } from './user.entity';
 import { UserRole } from './user-role.enum';
 import { CreateUserDto } from '../dtos/user/user.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateUserDto } from '../dtos/user/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -138,7 +139,6 @@ export class UsersService {
   ): Promise<User> {
     try {
       const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
-      console.log('Password comparison result:', isPasswordValid);
       if (!isPasswordValid) {
         throw new UnauthorizedException('Old password is incorrect');
       }
@@ -158,6 +158,21 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
+  async updateUser(user: User, updateUserDto: UpdateUserDto): Promise<User> {
+    try {
+      const newUser = {
+        ...user,
+        ...updateUserDto,
+      };
+      return await this.usersRepository.save(newUser);
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to update user');
+    }
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const user = new User();
     user.firebaseUid = createUserDto.firebaseUid;
@@ -165,10 +180,9 @@ export class UsersService {
     user.password = await bcrypt.hash(createUserDto.password, 10);
     user.name = createUserDto.name;
     user.dateOfBirth = new Date(createUserDto.dateOfBirth);
-    user.role = createUserDto.role || UserRole.USER;
+    user.role = UserRole.ADMIN;
     user.instagram = createUserDto.instagram;
     user.telegram = createUserDto.telegram;
-    user.cart = [];
     user.resetToken = null;
     user.resetTokenExpiration = null;
 
@@ -182,7 +196,7 @@ export class UsersService {
   async findOne(id: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['cart'],
+      relations: ['enrollments'],
       select: ['id', 'email', 'password', 'role', 'name'],
     });
     return user;

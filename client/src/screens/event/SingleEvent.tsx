@@ -47,7 +47,7 @@ const SingleEvent: React.FC<Props> = ({ route, navigation }) => {
       <Text style={{ fontSize: 18 }}>Price: ${event.price}</Text>
       <Text>Description: {event.description}</Text>
       <Text>Address: {event.address}</Text>
-      <Text>Seats left: {event.enrolledUsers.length} / {event.capacity}</Text>
+      <Text>Seats left: {event.enrollments.length} / {event.capacity}</Text>
     </View>
   );
 }
