@@ -43,5 +43,5 @@ export class UpdateEventDto {
 
   @IsString()
   @IsOptional()
-  image?: string;
+  imageUrl?: string;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
   Injectable,
@@ -81,6 +82,7 @@ export class EventsService {
   async updateEvent(
     id: string,
     updateEventDto: UpdateEventDto,
+    file?: Express.Multer.File,
   ): Promise<Event> {
     try {
       const event = await this.eventsRepository.findOne({ where: { id } });
@@ -88,7 +90,27 @@ export class EventsService {
         throw new NotFoundException('Event not found');
       }
       Object.assign(event, updateEventDto);
-      return await this.eventsRepository.save(event);
+      const savedEvent = await this.eventsRepository.save(event);
+
+      if (file) {
+        const fileExtension = path.extname(file.originalname).toLowerCase();
+        const key = `events/${savedEvent.id}/image${fileExtension}`;
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: key,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          }),
+        );
+        savedEvent.imageUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+        await this.eventsRepository.save(savedEvent);
+      } else if (updateEventDto.imageUrl) {
+        savedEvent.imageUrl = updateEventDto.imageUrl;
+        await this.eventsRepository.save(savedEvent);
+      }
+
+      return savedEvent;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
