@@ -58,7 +58,15 @@ export class EventsService {
   }
 
   async getAllEvents(): Promise<Event[]> {
-    return this.eventsRepository.find();
+    try {
+      const events = await this.eventsRepository.find();
+      if (!events) {
+        throw new NotFoundException('Events not found');
+      }
+      return events;
+    } catch {
+      throw new NotFoundException('Failed to fetch events');
+    }
   }
 
   async getSingleEvent(id: string): Promise<Event | null> {

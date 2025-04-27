@@ -116,7 +116,7 @@ export class EventsController {
     @Body() updateEventDto: UpdateEventDto,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
-    console.log(updateEventDto)
+    console.log(updateEventDto);
     return this.eventsService.updateEvent(id, updateEventDto, file);
   }
 }
