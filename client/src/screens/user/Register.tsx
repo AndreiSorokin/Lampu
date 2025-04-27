@@ -56,7 +56,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
       role: UserRole.USER,
     };
 
-    await axios.post('http://192.168.1.134:3000/users', userData, {
+    await axios.post('http://192.168.101.101:3000/users', userData, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

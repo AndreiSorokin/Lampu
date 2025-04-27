@@ -9,7 +9,7 @@ import { IsPastDateConstraint } from '../../users/validators/is-past-date.valida
 
 export class UpdateUserDto {
   @IsString()
-  @IsNotEmpty({ message: 'Date of birth is required' })
+  @IsOptional()
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: 'Date of birth must be in YYYY-MM-DD format',
   })

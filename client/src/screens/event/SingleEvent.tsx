@@ -17,7 +17,7 @@ const SingleEvent: React.FC<Props> = ({ route, navigation }) => {
   const [event, setEvent] = useState<Event | null>(null);
 
   useEffect(() => {
-    axios.get(`http://192.168.1.134:3000/events/${eventId}`)
+    axios.get(`http://192.168.101.101:3000/events/${eventId}`)
       .then(res => setEvent(res.data))
   }, [])
 

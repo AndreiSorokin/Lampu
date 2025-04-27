@@ -110,10 +110,13 @@ export class EventsController {
   @Put(':id')
   @UseGuards(FirebaseAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
   async updateEvent(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
+    @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
-    return this.eventsService.updateEvent(id, updateEventDto);
+    console.log(updateEventDto)
+    return this.eventsService.updateEvent(id, updateEventDto, file);
   }
 }

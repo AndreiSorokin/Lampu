@@ -1,20 +1,15 @@
 # Lampu
 
 ## BackEnd:
-Test change user info
-Test change event info (img)
-Test likes
-Test user status on event
+Fix user status on event
+Add likes
 
 Change verificationLink
 Change appDeepLink`
+Remove NODE_ENV=development and user in FirebaseAuthGuard 
 
 ## FrontEnd:
 
-Registration needs date of birth format fix
-First page(Option reg/login)
-Multi language
-Login, registration, Log out
 Profile, change info, update password
 Forgot password
 Enrollment, cancelation

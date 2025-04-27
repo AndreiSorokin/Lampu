@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import 'reflect-metadata';
 
 dotenv.config();
+console.log('ENV:', process.env.NODE_ENV);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

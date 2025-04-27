@@ -5,10 +5,11 @@ import {
 
 @ValidatorConstraint({ name: 'isPastDate', async: false })
 export class IsPastDateConstraint implements ValidatorConstraintInterface {
-  validate(date: string) {
+  validate(date: string | undefined) {
+    if (!date) return true;
     const inputDate = new Date(date);
     const today = new Date();
-    return inputDate < today;
+    return inputDate < today && !isNaN(inputDate.getTime());
   }
 
   defaultMessage() {
