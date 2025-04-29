@@ -1,10 +1,12 @@
 import React from 'react'
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { LoginFormData, loginSchema } from '../../zod/zod.schemas';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useTranslation } from 'react-i18next';
+
 import { auth } from '../../utils/firebaseConfig';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/AppNavigator';
@@ -14,6 +16,8 @@ import CustomButton from 'src/components/CustomButton';
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
 const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
+  const { t } = useTranslation();
+
   const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: 'center', padding: 20 },
     title: { fontSize: 24, marginBottom: 20, textAlign: 'center' },
@@ -75,12 +79,12 @@ const Login = ({ navigation }: { navigation: LoginScreenNavigationProp }) => {
             )}
 
             <CustomButton 
-              title="Login" 
+              title={t('login')}
               onPress={() => handleSubmit()}
               style={{justifyContent: 'center', alignItems: 'center'}}
             />
             <CustomButton
-              title="Need an account? Register"
+              title={t('register')}
               onPress={() => navigation.navigate('Register')}
               style={{justifyContent: 'center', alignItems: 'center'}}
             />

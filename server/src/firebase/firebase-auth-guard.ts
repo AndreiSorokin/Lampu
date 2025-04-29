@@ -19,19 +19,19 @@ export class FirebaseAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    if (process.env.NODE_ENV === 'development') {
-      request.user = {
-        id: '15788cc0-49f3-49b1-ad8d-c6bfc5a9cf9d',
-        // id: '4eb3a8a7-8701-4bd1-814d-8c6b55172b85',
-        email: 'kenici780@gmail.com',
-        // email: 'aa@aa.aa',
-        role: 'admin',
-        // role: 'user',
-        firebaseUid: '8IR3bhlCAaZORwKla16oEcF8GmB2',
-        // firebaseUid: 'wJpTB1IQqZe6MgLC0wuTJJ83TPf1',
-      };
-      return true;
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   request.user = {
+    //     id: '15788cc0-49f3-49b1-ad8d-c6bfc5a9cf9d',
+    //     // id: '4eb3a8a7-8701-4bd1-814d-8c6b55172b85',
+    //     email: 'kenici780@gmail.com',
+    //     // email: 'aa@aa.aa',
+    //     role: 'admin',
+    //     // role: 'user',
+    //     firebaseUid: '8IR3bhlCAaZORwKla16oEcF8GmB2',
+    //     // firebaseUid: 'wJpTB1IQqZe6MgLC0wuTJJ83TPf1',
+    //   };
+    //   return true;
+    // }
     const authHeader = request.headers.authorization;
 
     if (!authHeader?.startsWith('Bearer ')) {

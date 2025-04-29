@@ -8,6 +8,7 @@ import { Formik } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { format } from 'date-fns';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { useTranslation } from 'react-i18next';
 
 import { auth } from 'src/utils/firebaseConfig';
 import { RootStackParamList } from 'src/navigation/AppNavigator';
@@ -19,6 +20,8 @@ import CustomButton from 'src/components/CustomButton';
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 
 const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) => {
+    const { t } = useTranslation();
+  
   const initialValues: RegisterFormData = {
     email: '',
     password: '',
@@ -123,7 +126,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 <Text style={styles.error}>{errors.email}</Text>
               )}
               <Input
-                placeholder="Password"
+                placeholder={t('password')}
                 value={values.password}
                 onChangeText={handleChange('password')}
                 secureTextEntry
@@ -133,7 +136,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 <Text style={styles.error}>{errors.password}</Text>
               )}
               <Input
-                placeholder="Confirm password"
+                placeholder={t('confirmPassword')}
                 value={values.confirmPassword}
                 onChangeText={handleChange('confirmPassword')}
                 secureTextEntry
@@ -143,7 +146,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 <Text style={styles.error}>{errors.confirmPassword}</Text>
               )}
               <Pressable onPress={showDatePicker} style={[styles.input, { justifyContent: 'center' }]}>
-                <Text>{values.dateOfBirth || 'Select Date of Birth'}</Text>
+                <Text>{values.dateOfBirth || t('dateOfBirth')}</Text>
               </Pressable>
               {touched.dateOfBirth && errors.dateOfBirth && (
                 <Text style={styles.error}>{errors.dateOfBirth}</Text>
@@ -156,7 +159,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 maximumDate={new Date()}
               />
               <Input
-                placeholder="Name (optional)"
+                placeholder={t('firstName')}
                 value={values.name}
                 onChangeText={handleChange('name')}
                 editable={!isSubmitting}
@@ -165,7 +168,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 <Text style={styles.error}>{errors.name}</Text>
               )}
               <Input
-                placeholder="Instagram (optional)"
+                placeholder={t('instagram')}
                 onChangeText={handleChange('instagram')}
                 value={values.instagram}
                 editable={!isSubmitting}
@@ -174,7 +177,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 <Text style={styles.error}>{errors.instagram}</Text>
               )}
               <Input
-                placeholder="Telegram (optional)"
+                placeholder={t('telegram')}
                 onChangeText={handleChange('telegram')}
                 value={values.telegram}
                 editable={!isSubmitting}
@@ -183,13 +186,13 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
                 <Text style={styles.error}>{errors.telegram}</Text>
               )}
               <CustomButton
-                title={isSubmitting ? 'Registering...' : 'Register'}
+                title={isSubmitting ? 'Registering...' : t('register')}
                 onPress={() => handleSubmit()}
                 disabled={isSubmitting || !!Object.keys(errors).length}
                 style={{ justifyContent: 'center', alignItems: 'center' }}
               />
               <CustomButton
-                title="Already have an account?"
+                title={t('alreadyHaveAnAccount')}
                 onPress={() => navigation.navigate('Login')}
                 disabled={isSubmitting}
                 style={{ justifyContent: 'center', alignItems: 'center' }}
