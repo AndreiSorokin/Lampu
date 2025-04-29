@@ -57,6 +57,15 @@ export class EventsService {
     });
   }
 
+  async getLikedEvents(userId: string): Promise<Event[]> {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: ['likes'],
+    });
+  
+    return user?.likes || [];
+  }
+
   async getAllEvents(): Promise<Event[]> {
     try {
       const events = await this.eventsRepository.find();
@@ -73,7 +82,7 @@ export class EventsService {
     try {
       const event = await this.eventsRepository.findOne({
         where: { id },
-        relations: ['enrollments'],
+        relations: ['likedByUsers', 'enrollments'],
       });
       if (!event) {
         throw new NotFoundException(`Event with ID ${id} not found`);
@@ -197,27 +206,24 @@ export class EventsService {
     }
   }
 
-  async likeEvent(user: User, eventId: string): Promise<UserResponseDto> {
+  async likeEvent(userId: string, eventId: string): Promise<void> {
     try {
-      const event = await this.eventsRepository.findOne({
-        where: { id: eventId },
-        relations: ['likedByUsers'],
+      const event = await this.eventsRepository.findOneBy({ id: eventId });
+      const user = await this.usersRepository.findOne({
+        where: { id: userId },
+        relations: ['likes'],
       });
 
-      if (!event) {
-        throw new BadRequestException('Event not found');
+      if (!user || !event) {
+        throw new NotFoundException('User or Event not found');
       }
 
-      user.likes = user.likes || [];
-      if (!user.likes.some((e) => e.id === eventId)) {
-        user.likes.push(event);
+      const alreadyLiked = user.likes.find((e) => e.id === event.id);
+      if (alreadyLiked) {
+        throw new BadRequestException('Event is already liked');
       }
-
-      const savedUser = await this.usersRepository.save(user);
-
-      return plainToClass(UserResponseDto, savedUser, {
-        excludeExtraneousValues: true,
-      });
+      user.likes.push(event);
+      await this.usersRepository.save(user);
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -226,24 +232,17 @@ export class EventsService {
     }
   }
 
-  async unlikeEvent(user: User, eventId: string): Promise<UserResponseDto> {
+  async unlikeEvent(userId: string, eventId: string): Promise<void> {
     try {
-      const fullUser = await this.usersRepository.findOne({
-        where: { id: user.id },
+      const user = await this.usersRepository.findOne({
+        where: { id: userId },
         relations: ['likes'],
       });
-
-      if (!fullUser) {
-        throw new BadRequestException('User not found');
-      }
-
-      fullUser.likes =
-        fullUser.likes?.filter((event) => event.id !== eventId) || [];
-      const savedUser = await this.usersRepository.save(fullUser);
-
-      return plainToClass(UserResponseDto, savedUser, {
-        excludeExtraneousValues: true,
-      });
+    
+      if (!user) throw new NotFoundException('User not found');
+    
+      user.likes = user.likes.filter((e) => e.id !== eventId);
+      await this.usersRepository.save(user);
     } catch {
       throw new InternalServerErrorException('Failed to unlike event');
     }

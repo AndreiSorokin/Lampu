@@ -196,7 +196,7 @@ export class UsersService {
   async findOne(id: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      relations: ['enrollments'],
+      relations: ['likes', 'enrollments'],
       select: ['id', 'email', 'password', 'role', 'name'],
     });
     return user;
