@@ -1,8 +1,6 @@
 # Lampu
 
 ## BackEnd:
-Fix user status on event
-Add likes
 
 Change verificationLink
 Change appDeepLink`

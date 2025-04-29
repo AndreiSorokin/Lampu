@@ -10,6 +10,7 @@ import { Event } from './events/event.entity';
 import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Enrollment } from './enrollments/enrollment.entity';
+import { EnrollmentsModule } from './enrollments/enrollment.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { Enrollment } from './enrollments/enrollment.entity';
     ScheduleModule.forRoot(),
     UsersModule,
     EventsModule,
+    EnrollmentsModule,
     AuthModule,
     MailerModule.forRoot({
       transport: {

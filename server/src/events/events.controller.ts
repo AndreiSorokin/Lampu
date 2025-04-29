@@ -12,7 +12,8 @@ import {
   Delete,
   ParseUUIDPipe,
   UseInterceptors,
-  Req,
+  Request,
+  Patch,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
@@ -31,22 +32,24 @@ import { FirebaseAuthGuard } from '../firebase/firebase-auth-guard';
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Post(':eventId/like')
+  @Get('/favorites')
   @UseGuards(FirebaseAuthGuard)
-  async likeEvent(
-    @Param('eventId', ParseUUIDPipe) eventId: string,
-    @CurrentUser() user: User,
-  ): Promise<UserResponseDto> {
-    return await this.eventsService.likeEvent(user, eventId);
+  async getFavorites(@Request() req) {
+    return await this.eventsService.getLikedEvents(req.user.id);
   }
 
-  @Delete(':eventId/like')
-  @UseGuards(FirebaseAuthGuard, RolesGuard)
-  async unlikeEvent(
-    @Param('eventId', ParseUUIDPipe) eventId: string,
-    @CurrentUser() user: User,
-  ): Promise<UpdateEventDto> {
-    return await this.eventsService.unlikeEvent(user, eventId);
+  @Patch(':eventId/like')
+  @UseGuards(FirebaseAuthGuard)
+  async likeEvent(@Param('eventId') eventId: string, @Request() req) {
+    await this.eventsService.likeEvent(req.user.id, eventId);
+    return { message: 'Event liked' };
+  }
+
+  @Patch(':eventId/unlike')
+  @UseGuards(FirebaseAuthGuard)
+  async unlikeEvent(@Param('eventId') eventId: string, @Request() req) {
+    await this.eventsService.unlikeEvent(req.user.id, eventId);
+    return { message: 'Event unliked' };
   }
 
   @Post(':eventId/enroll')
@@ -116,7 +119,7 @@ export class EventsController {
     @Body() updateEventDto: UpdateEventDto,
     @UploadedFile() file?: Express.Multer.File,
   ): Promise<Event> {
-    console.log(updateEventDto)
+    console.log(updateEventDto);
     return this.eventsService.updateEvent(id, updateEventDto, file);
   }
 }
