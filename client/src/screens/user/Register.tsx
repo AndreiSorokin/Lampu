@@ -20,7 +20,7 @@ import CustomButton from 'src/components/CustomButton';
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 
 const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   
   const initialValues: RegisterFormData = {
     email: '',
@@ -117,7 +117,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
             <View>
               {generalError && <Text style={styles.error}>{generalError}</Text>}
               <Input
-                placeholder="Email"
+                placeholder={t('email')}
                 value={values.email}
                 onChangeText={handleChange('email')}
                 editable={!isSubmitting}
@@ -185,18 +185,20 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
               {touched.telegram && errors.telegram && (
                 <Text style={styles.error}>{errors.telegram}</Text>
               )}
-              <CustomButton
-                title={isSubmitting ? 'Registering...' : t('register')}
-                onPress={() => handleSubmit()}
-                disabled={isSubmitting || !!Object.keys(errors).length}
-                style={{ justifyContent: 'center', alignItems: 'center' }}
-              />
-              <CustomButton
-                title={t('alreadyHaveAnAccount')}
-                onPress={() => navigation.navigate('Login')}
-                disabled={isSubmitting}
-                style={{ justifyContent: 'center', alignItems: 'center' }}
-              />
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <CustomButton
+                  title={isSubmitting ? 'Registering...' : t('register')}
+                  onPress={() => handleSubmit()}
+                  disabled={isSubmitting || !!Object.keys(errors).length}
+                  style={{ justifyContent: 'center', alignItems: 'center' }}
+                />
+                <CustomButton
+                  title={t('alreadyHaveAnAccount')}
+                  onPress={() => navigation.navigate('Login')}
+                  disabled={isSubmitting}
+                  style={{ justifyContent: 'center', alignItems: 'center' }}
+                />
+              </View>
             </View>
           );
         }}
