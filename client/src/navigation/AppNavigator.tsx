@@ -14,6 +14,9 @@ import Enrollments from 'src/screens/event/Enrollments';
 import Language from 'src/screens/Language';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'src/utils/firebaseConfig';
+import { useTranslation } from 'react-i18next';
+import Likes from 'src/screens/user/Likes';
+
 
 export type RootStackParamList = {
   Events: undefined;
@@ -41,6 +44,7 @@ function EventStack() {
       <Stack.Screen name="CreateEvent" component={CreateEvent} />
       <Stack.Screen name="Profile" component={Profile}/>
       <Stack.Screen name="Enrollments" component={Enrollments}/>
+      <Stack.Screen name="Likes" component={Likes}/>
       <Stack.Screen name="Tervetuloa" component={Tervetuloa}/>
       <Stack.Screen name="Language" component={Language}/>
     </Stack.Navigator>
@@ -62,6 +66,8 @@ function AuthStack() {
 
 export default function AppNavigator() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -89,8 +95,9 @@ export default function AppNavigator() {
   return isLoggedIn ? (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
-      <Tab.Screen name="Enrollments" component={Enrollments}/>
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }}/>
+      <Tab.Screen name={t('tickets')} component={Enrollments}/>
+      <Tab.Screen name={t('profile')} component={Profile} />
     </Tab.Navigator>
   ) : (
     <AuthStack />
