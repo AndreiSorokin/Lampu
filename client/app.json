@@ -6,8 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,17 +22,19 @@
       }
     },
     "web": {
-      "build": {
-        "babel": {
-          "include": [
-            "react-native-dotenv"
-          ]
-        }
-      }
+      "favicon": "./assets/favicon.png"
     },
-    "jsEngine": "jsc",
+    "jsEngine": "hermes",
     "plugins": [
-      "expo-localization"
+      "expo-localization",
+      [
+        "@react-native-firebase/app",
+        {
+          "googleServicesFile": "./google-services.json"
+        }
+      ],
+      "@react-native-firebase/auth",
+      "expo-dev-client"
     ]
   }
 }
