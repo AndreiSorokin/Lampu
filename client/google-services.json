@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "214650330652",
+    "project_id": "lampu-7fffa",
+    "storage_bucket": "lampu-7fffa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:214650330652:android:61242b185dcfb38c92c9d9",
+        "android_client_info": {
+          "package_name": "com.anonymous.client"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxyMPITLFFsWoNvsValimwFl6Km1jVCso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
