@@ -5,13 +5,13 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.anonymous.client",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -19,27 +19,28 @@
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.anonymous.client",
-      "googleServicesFile": "./google-services.json"
+      }
     },
-    "jsEngine": "hermes",
-    "plugins": [
-      "expo-localization",
-      [
-        "@react-native-firebase/app",
-        {
-          "googleServicesFile": "./google-services.json"
+    "web": {
+      "build": {
+        "babel": {
+          "include": [
+            "react-native-dotenv"
+          ]
         }
-      ],
-      "@react-native-firebase/auth",
-      "expo-dev-client"
+      }
+    },
+    "jsEngine": "jsc",
+    "plugins": [
+      "expo-localization"
     ],
     "extra": {
       "eas": {
-        "projectId": "ff4b5847-cc50-4ac1-92de-dc66048c9bba"
+        "projectId": "9ff2510d-456f-486e-9b8a-88b73576b837"
       }
-    }
+    },
+    "owner": "andrei.sorokin.1"
   }
 }

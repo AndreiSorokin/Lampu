@@ -1,9 +1,13 @@
 # Lampu
 
-Why am I getting "iOS Bundled 1050ms index.ts (1577 modules)
- ERROR  [runtime not ready]: Invariant Violation: Your JavaScript code tried to access a native module that doesn't exist. 
+I am using Expo go, not development build
+If I use development build I need to provide REVERSE_CLIENT_ID field which in its turn requires setting up Google login on firebase
+I am NOT going to use google login, I only need login with email and password
 
-If you're trying to use a module that is not supported in Expo Go, you need to create a development build of your app. See https://docs.expo.dev/development/introduction/ for more info., js engine: hermes"  if with SDK 52 my app worked?
+Do I need to use development build and set op the google auth on firebase, even though I am not going to use it anyway?
+Or I can go with Expo Go
+users have to stay logged in across restarts
+
 
 ## BackEnd:
 
