@@ -16,6 +16,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'src/utils/firebaseConfig';
 import { useTranslation } from 'react-i18next';
 import Likes from 'src/screens/user/Likes';
+import EventsIcon from '../../assets/images/menu/home.svg';
+import LikesIcon from '../../assets/images/menu/like.svg';
+import ProfileIcon from '../../assets/images/menu/profile.svg';
+import TicketsIcon from '../../assets/images/menu/ticket.svg';
+
 
 
 export type RootStackParamList = {
@@ -100,12 +105,31 @@ export default function AppNavigator() {
   }
 
   return  (
-    <Tab.Navigator >
-      <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
-      <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }}/>
-      <Tab.Screen name={t('tickets')} component={Enrollments}/>
-      <Tab.Screen name={t('profile')} component={Profile} />
-    </Tab.Navigator>
+    <Tab.Navigator
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ focused, color, size }) => {
+      switch (route.name) {
+        case 'Events':
+          return <EventsIcon width={24} height={24} fill={color} />;
+        case t('likes'):
+          return <LikesIcon width={24} height={24} fill={color} />;
+        case t('tickets'):
+          return <TicketsIcon width={24} height={24} fill={color} />;
+        case t('profile'):
+          return <ProfileIcon width={24} height={24} fill={color} />;
+      }
+    },
+    tabBarLabelPosition: 'below-icon',
+    tabBarActiveTintColor: '#000',
+    tabBarInactiveTintColor: '#aaa',
+  })}
+>
+  <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+  <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
+  <Tab.Screen name={t('tickets')} component={Enrollments} />
+  <Tab.Screen name={t('profile')} component={Profile} />
+</Tab.Navigator>
+
   )
 
   // return isLoggedIn ? (
