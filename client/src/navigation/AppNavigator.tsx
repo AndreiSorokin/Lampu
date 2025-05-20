@@ -40,8 +40,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function EventStack() {
   return (
-    <Stack.Navigator 
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="SingleEvent" component={SingleEvent}/>
       <Stack.Screen name="CreateEvent" component={CreateEvent} />
@@ -106,29 +105,29 @@ export default function AppNavigator() {
 
   return  (
     <Tab.Navigator
-  screenOptions={({ route }) => ({
-    tabBarIcon: ({ focused, color, size }) => {
-      switch (route.name) {
-        case 'Events':
-          return <EventsIcon width={24} height={24} fill={color} />;
-        case t('likes'):
-          return <LikesIcon width={24} height={24} fill={color} />;
-        case t('tickets'):
-          return <TicketsIcon width={24} height={24} fill={color} />;
-        case t('profile'):
-          return <ProfileIcon width={24} height={24} fill={color} />;
-      }
-    },
-    tabBarLabelPosition: 'below-icon',
-    tabBarActiveTintColor: '#000',
-    tabBarInactiveTintColor: '#aaa',
-  })}
->
-  <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
-  <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
-  <Tab.Screen name={t('tickets')} component={Enrollments} />
-  <Tab.Screen name={t('profile')} component={Profile} />
-</Tab.Navigator>
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          switch (route.name) {
+            case 'Events':
+              return <EventsIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+            case t('likes'):
+              return <LikesIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+            case t('tickets'):
+              return <TicketsIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+            case t('profile'):
+              return <ProfileIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+          }
+        },
+        tabBarLabelPosition: 'below-icon',
+        tabBarActiveTintColor: '#000',
+        tabBarInactiveTintColor: '#aaa',
+      })}
+    >
+    <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+    <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
+    <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }}/>
+    <Tab.Screen name={t('profile')} component={Profile} options={{ headerShown: false }}/>
+  </Tab.Navigator>
 
   )
 
