@@ -21,6 +21,8 @@
    "findAnEvent": "Löytää",
    "organazer": "Järjestäjä",
    "membership": "Jäsenyys",
+   "edit": "Muokkaa",
+   "logout": "Kirjaudu ulos",
    "membershipValidityPeriod": "Jäsenyyden voimassaoloaika:",
    "membershipInEffect": "Voimassa",
    "membershipWhy": "Miksi jäsenyys?",

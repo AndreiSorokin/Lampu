@@ -4,8 +4,8 @@ import AppNavigator from './src/navigation/AppNavigator';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from './src/locales/i18n';
-import React from 'react';
 import * as Font from 'expo-font';
+import { enableScreens } from 'react-native-screens';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -18,6 +18,7 @@ const MyTheme = {
 export default function App() {
   const [languageSet, setLanguageSet] = useState<boolean | null>(null);
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  enableScreens(false);
 
   useEffect(() => {
     async function loadFonts() {
@@ -49,3 +50,14 @@ return (
   </NavigationContainer>
 );
 }
+
+// import { NavigationContainer } from '@react-navigation/native';
+// import AppNavigator from './src/navigation/AppNavigator';
+
+// export default function App() {
+//   return (
+//     <NavigationContainer>
+//       <AppNavigator />
+//     </NavigationContainer>
+//   );
+// }

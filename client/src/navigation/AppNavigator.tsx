@@ -16,6 +16,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from 'src/utils/firebaseConfig';
 import { useTranslation } from 'react-i18next';
 import Likes from 'src/screens/user/Likes';
+import EventsIcon from '../../assets/images/menu/home.svg';
+import LikesIcon from '../../assets/images/menu/like.svg';
+import ProfileIcon from '../../assets/images/menu/profile.svg';
+import TicketsIcon from '../../assets/images/menu/ticket.svg';
+
 
 
 export type RootStackParamList = {
@@ -35,10 +40,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function EventStack() {
   return (
-    <Stack.Navigator 
-    screenOptions={{
-      contentStyle: { backgroundColor: '#FFF6E5' },
-    }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Events" component={Events} />
       <Stack.Screen name="SingleEvent" component={SingleEvent}/>
       <Stack.Screen name="CreateEvent" component={CreateEvent} />
@@ -63,6 +65,15 @@ function AuthStack() {
     </Stack.Navigator>
   );
 }
+
+// function AuthStack() {
+//   return (
+//     <Stack.Navigator initialRouteName="Language">
+//       <Stack.Screen name="Language" component={Language} options={{ headerShown: false }} />
+//     </Stack.Navigator>
+//   );
+// }
+
 
 export default function AppNavigator() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -92,14 +103,64 @@ export default function AppNavigator() {
     );
   }
 
-  return isLoggedIn ? (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
-      <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }}/>
-      <Tab.Screen name={t('tickets')} component={Enrollments}/>
-      <Tab.Screen name={t('profile')} component={Profile} />
-    </Tab.Navigator>
-  ) : (
-    <AuthStack />
-  );
+  return  (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          switch (route.name) {
+            case 'Events':
+              return <EventsIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+            case t('likes'):
+              return <LikesIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+            case t('tickets'):
+              return <TicketsIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+            case t('profile'):
+              return <ProfileIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+          }
+        },
+        tabBarLabelPosition: 'below-icon',
+        tabBarActiveTintColor: '#000',
+        tabBarInactiveTintColor: '#aaa',
+      })}
+    >
+    <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+    <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
+    <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }}/>
+    <Tab.Screen name={t('profile')} component={Profile} options={{ headerShown: false }}/>
+  </Tab.Navigator>
+
+  )
+
+  // return isLoggedIn ? (
+  //   <Tab.Navigator >
+  //     <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+  //     <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }}/>
+  //     <Tab.Screen name={t('tickets')} component={Enrollments}/>
+  //     <Tab.Screen name={t('profile')} component={Profile} />
+  //   </Tab.Navigator>
+  // ) : (
+  //   <AuthStack />
+  // );
 }
+
+// import { createStackNavigator } from '@react-navigation/stack';
+// import { View, Text } from 'react-native';
+// import React from 'react';
+
+// const Stack = createStackNavigator();
+
+// function DummyScreen() {
+//   return (
+//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+//       <Text>Hello World</Text>
+//     </View>
+//   );
+// }
+
+// export default function AppNavigator() {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen name="Home" component={DummyScreen} />
+//     </Stack.Navigator>
+//   );
+// }

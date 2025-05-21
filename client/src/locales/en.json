@@ -21,6 +21,8 @@
    "findAnEvent": "Search",
    "organazer": "Organazer",
    "membership": "Membership",
+   "edit": "Edit",
+   "logout": "Log out",
    "membershipValidityPeriod": "Membership validity period",
    "membershipInEffect": "In effect",
    "membershipWhy": "Why membership?",
