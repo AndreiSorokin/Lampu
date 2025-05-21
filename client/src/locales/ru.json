@@ -21,6 +21,8 @@
    "findAnEvent": "Найти",
    "organazer": "Организатор",
    "membership": "Членство",
+   "edit": "Изменить",
+   "logout": "Выйти",
    "membershipValidityPeriod": "Срок действия членства",
    "membershipInEffect": "Действует",
    "membershipWhy": "Зачем нужно членство?",
