@@ -20,6 +20,11 @@ import EventsIcon from '../../assets/images/menu/home.svg';
 import LikesIcon from '../../assets/images/menu/like.svg';
 import ProfileIcon from '../../assets/images/menu/profile.svg';
 import TicketsIcon from '../../assets/images/menu/ticket.svg';
+import EventsIconClicked from '../../assets/images/menu/home_clicked.svg';
+import LikesIconClicked from '../../assets/images/menu/like_clicked.svg';
+import ProfileIconClicked from '../../assets/images/menu/profile_clicked.svg';
+import TicketsIconClicked from '../../assets/images/menu/ticket_clicked.svg';
+
 
 
 
@@ -62,6 +67,7 @@ function AuthStack() {
       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
       <Stack.Screen name="Events" component={Events} options={{ headerShown: false }}/>
       <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
+      <Stack.Screen name="Organizer"/>
     </Stack.Navigator>
   );
 }
@@ -109,25 +115,38 @@ export default function AppNavigator() {
         tabBarIcon: ({ focused, color, size }) => {
           switch (route.name) {
             case 'Events':
-              return <EventsIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+              return focused
+                ? <EventsIconClicked width={24} height={24} />
+                : <EventsIcon width={24} height={24} />;
             case t('likes'):
-              return <LikesIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+              return focused
+                ? <LikesIconClicked width={24} height={24} />
+                : <LikesIcon width={24} height={24} />;
             case t('tickets'):
-              return <TicketsIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+              return focused
+                ? <TicketsIconClicked width={24} height={24} />
+                : <TicketsIcon width={24} height={24} fill="#FF9A42"/>;
             case t('profile'):
-              return <ProfileIcon width={24} height={24} style={{ color: focused ? 'black' : '#aaa' }} />;
+              return focused
+                ? <ProfileIconClicked width={24} height={24} />
+                : <ProfileIcon width={24} height={24} />;
           }
         },
         tabBarLabelPosition: 'below-icon',
         tabBarActiveTintColor: '#000',
-        tabBarInactiveTintColor: '#aaa',
+        tabBarInactiveTintColor: '#000',
+        tabBarStyle: {
+          backgroundColor: '#FF9A42',
+          borderTopWidth: 0,
+        },
       })}
-    >
-    <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
-    <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
-    <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }}/>
-    <Tab.Screen name={t('profile')} component={Profile} options={{ headerShown: false }}/>
-  </Tab.Navigator>
+    >   
+      <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+      <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
+      <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }} />
+      <Tab.Screen name={t('profile')} component={Profile} options={{ headerShown: false }} />
+    </Tab.Navigator>
+
 
   )
 

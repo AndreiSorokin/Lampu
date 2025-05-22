@@ -1,15 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StackNavigationProp } from '@react-navigation/stack';
 import React from 'react'
 import { useTranslation } from 'react-i18next';
 import { View, Text, Button, Pressable } from 'react-native'
 import CustomButton from 'src/components/CustomButton';
-import { RootStackParamList } from 'src/navigation/AppNavigator';
 import { auth } from 'src/utils/firebaseConfig';
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Organizer'>;
-
-const Profile = ({ navigation }: { navigation: ProfileScreenNavigationProp }) => {
+const Profile = () => {
   const { t } = useTranslation();
   const logOut = async() => {
     try {
