@@ -1,8 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, Text, Image, TouchableOpacity } from 'react-native';
+import { FlatList, View, Text, Image, Linking, TouchableOpacity } from 'react-native';
 import { Event } from '../../types/events';
 import cakeBoy from '../../../assets/images/cakeBoy.png';
+import LampuIcon from '../../../assets/images/Lampu.svg';
+import InstagramIcon from '../../../assets/images/socialMedia/insta.svg';
+import TelegramIcon from '../../../assets/images/socialMedia/telegram.svg';
+import LinkedInIcon from '../../../assets/images/socialMedia/linkedIn.svg';
+import TikTokIcon from '../../../assets/images/socialMedia/tikTok.svg';
+
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Search from 'src/components/Search';
@@ -24,7 +30,35 @@ const Events: React.FC<Props> = ({ navigation }) => {
   }, [])
 
   return (
-    <View style={{ flex: 1, padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, padding: 20, marginTop: 50, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <LampuIcon width={180} height={60} />
+        <View style={{
+          flexDirection: 'row',
+          marginLeft: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+          marginTop: 10,
+        }}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com')}>
+            <InstagramIcon width={60} height={60} />
+          </TouchableOpacity>
+      
+          <TouchableOpacity onPress={() => Linking.openURL('https://t.me')}>
+            <TelegramIcon width={36} height={36} />
+          </TouchableOpacity>
+      
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.tiktok.com')}>
+            <TikTokIcon width={36} height={36} />
+          </TouchableOpacity>
+      
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.linkedin.com')}>
+            <LinkedInIcon width={36} height={36} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <Text style={{ fontSize: 20, marginBottom: 10 }}>Events</Text>
       <FlatList
