@@ -17,7 +17,7 @@ Remove NODE_ENV=development and user in FirebaseAuthGuard
 
 ## FrontEnd:
 
-Register com.yourname.lampu.client (com.anonymous.client) in Apple Developer portal
+update eventURL in Events
 
 Profile, change info, update password
 Forgot password

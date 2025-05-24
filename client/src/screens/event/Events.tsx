@@ -38,7 +38,7 @@ const Events: React.FC<Props> = ({ navigation }) => {
   const handleShare = async (event) => {
   try {
     await Share.share({
-      message: `Check out this event: ${event.name} on ${event.date}\n${event.link || 'https://yourapp.com/event/' + event.id}`,
+      message: `Check out this event: ${event.name} on ${event.date}\n${event.link || 'eventURL' + event.id}`,
     });
   } catch (error) {
     console.log('Error sharing event:', error.message);
@@ -94,7 +94,7 @@ const Events: React.FC<Props> = ({ navigation }) => {
               <View>
                 <Image
                   source={item.imageUrl ? { uri: item.imageUrl } : cakeBoy}
-                  style={{ width: 380, height: 180, borderRadius: 50 }}
+                  style={{ width: 380, height: 180, borderRadius: 8 }}
                 />
                 <View style={{ padding: 10 }}>
                   <Text style={{ fontWeight: 'bold' }}>{item.name}</Text>
@@ -103,17 +103,17 @@ const Events: React.FC<Props> = ({ navigation }) => {
                 </View>
               </View>
               <View style={{ position: 'absolute', bottom: 50, right: 0, flexDirection: 'row', gap: 10 }}>
-  <TouchableOpacity onPress={() => handleShare(item)}>
-    <ShareIcon width={24} height={24} />
-  </TouchableOpacity>
-  <TouchableOpacity onPress={() => toggleLike(item.id)}>
-    {likedItems.includes(item.id) ? (
-      <LikeClickedIcon width={24} height={24} />
-    ) : (
-      <LikeIcon width={24} height={24} />
-    )}
-  </TouchableOpacity>
-</View>
+              <TouchableOpacity onPress={() => handleShare(item)}>
+                <ShareIcon width={24} height={24} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => toggleLike(item.id)}>
+                {likedItems.includes(item.id) ? (
+                  <LikeClickedIcon width={24} height={24} />
+                ) : (
+                  <LikeIcon width={24} height={24} />
+                )}
+              </TouchableOpacity>
+            </View>
             </View>
           </TouchableOpacity>
         )}

@@ -4,6 +4,7 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import cakeBoy from '../../../assets/images/cakeBoy.png';
 import { Event } from '../../types/events';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Arrow from '../../../assets/images/arrow_left.svg';
 
 type RootStackParamList = {
   SingleEvent: { eventId: string };
@@ -30,12 +31,12 @@ const SingleEvent: React.FC<Props> = ({ route, navigation }) => {
   }
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <View  style={{ flex: 1, padding: 20, marginTop: 30, alignItems: 'center', justifyContent: 'center' }}>
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={{ marginBottom: 20 }}
       >
-        <Text style={{ fontSize: 18, color: 'blue' }}>← Back to Events</Text>
+        <Arrow width={48} height={48} style={{ position: 'absolute', top: -100, left: -200 }}/>
       </TouchableOpacity>
 
       <Image
