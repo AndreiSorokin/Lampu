@@ -51,7 +51,7 @@ const Profile = () => {
           <Text style={{ margin: 10 }}>Email</Text>
         </View>
         <TouchableOpacity
-          onPress={() => {}}
+          onPress={() => navigation.navigate('UpdateUserInfo')}
           style={{
             backgroundColor: '#EA7108',
             width: 120,

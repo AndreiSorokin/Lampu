@@ -26,10 +26,10 @@ const Membership: React.FC<Props> = ({ navigation }) => {
    return (
       <ScrollView contentContainerStyle={{ marginTop: 100, padding: 20, alignItems: 'center' }}>
          {/* Header Section */}
+         <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Arrow width={36} height={36} style={{ left: -170, top: -20 }} />
+          </TouchableOpacity>
          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, alignSelf: 'flex-start' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-               <Arrow width={36} height={36} />
-            </TouchableOpacity>
            <Text style={{ fontWeight: 'bold', fontSize: 36, marginLeft: 10 }}>{t('membership')}</Text>
          </View>
 

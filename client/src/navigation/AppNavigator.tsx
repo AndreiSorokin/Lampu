@@ -25,6 +25,7 @@ import LikesIconClicked from '../../assets/images/menu/like_clicked.svg';
 import ProfileIconClicked from '../../assets/images/menu/profile_clicked.svg';
 import TicketsIconClicked from '../../assets/images/menu/ticket_clicked.svg';
 import Membership from 'src/screens/user/Membership';
+import UpdateUserInfo from 'src/screens/user/UpdateUserInfo';
 
 
 
@@ -49,6 +50,7 @@ export default function ProfileStack() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProfileMain" component={Profile} />
       <Stack.Screen name="Membership" component={Membership} />
+      <Stack.Screen name="UpdateUserInfo" component={UpdateUserInfo}/>
     </Stack.Navigator>
   );
 }
@@ -65,6 +67,7 @@ function EventStack() {
       <Stack.Screen name="Tervetuloa" component={Tervetuloa}/>
       <Stack.Screen name="Language" component={Language}/>
       <Stack.Screen name="Membership" component={Membership}/>
+      <Stack.Screen name="UpdateUserInfo" component={UpdateUserInfo}/>
     </Stack.Navigator>
   );
 }

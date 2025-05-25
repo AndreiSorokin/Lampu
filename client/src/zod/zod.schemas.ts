@@ -18,5 +18,15 @@ export const registerSchema = z.object({
    path: ['confirmPassword'],
 });
 
+export const updateUserSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  instagram: z.string().optional(),
+  telegram: z.string().optional(),
+  dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: 'Invalid date',
+  }),
+});
+
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type UpdateUserFormData = z.infer<typeof updateUserSchema>;
