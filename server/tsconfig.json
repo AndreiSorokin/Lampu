@@ -11,7 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "noImplicitAny": false,
+    "noImplicitAny": false
   },
   "include": ["src/**/*"]
 }

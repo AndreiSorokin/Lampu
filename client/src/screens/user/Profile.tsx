@@ -9,10 +9,12 @@ import ClipIcon from '../../../assets/images/profile/clip.svg';
 import DocumentIcon from '../../../assets/images/profile/document.svg';
 import LangIcon from '../../../assets/images/profile/language.svg';
 import NotificationIcon from '../../../assets/images/profile/notification.svg';
+import { useNavigation } from '@react-navigation/native';
 
 const NOTIFICATION_PREF_KEY = 'notificationsEnabled';
 
 const Profile = () => {
+  const navigation = useNavigation();
   const { t } = useTranslation();
   const [isEnabled, setIsEnabled] = useState(false);
   useEffect(() => {
@@ -64,7 +66,7 @@ const Profile = () => {
           <Text style={{ color: 'white', fontWeight: 'bold'}}>{t('edit')}</Text>
         </TouchableOpacity>
       </View>
-      <View style={{ padding: 20, width: 350 }}>
+      <View style={{ width: 350 }}>
         <TouchableOpacity
           style={[styles.row, styles.underline]}
           onPress={() => navigation.navigate('Membership')}
@@ -97,7 +99,7 @@ const Profile = () => {
         </View>
       </View>
 
-      <View style={{ alignItems: 'center', justifyContent: 'center', margin: 100 }}>
+      <View style={{ alignItems: 'center', justifyContent: 'center', margin: 80 }}>
         <CustomButton
           title={t('organazer')}
           onPress={() => navigation.navigate('Register')}

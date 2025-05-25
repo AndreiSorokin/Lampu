@@ -11,6 +11,7 @@ users have to stay logged in across restarts
 
 ## BackEnd:
 
+Remove Membership after a year
 Change verificationLink
 Change appDeepLink`
 Remove NODE_ENV=development and user in FirebaseAuthGuard 

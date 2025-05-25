@@ -62,7 +62,7 @@ export class EventsService {
       where: { id: userId },
       relations: ['likes'],
     });
-  
+
     return user?.likes || [];
   }
 
@@ -238,9 +238,9 @@ export class EventsService {
         where: { id: userId },
         relations: ['likes'],
       });
-    
+
       if (!user) throw new NotFoundException('User not found');
-    
+
       user.likes = user.likes.filter((e) => e.id !== eventId);
       await this.usersRepository.save(user);
     } catch {

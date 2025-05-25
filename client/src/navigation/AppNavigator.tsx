@@ -24,6 +24,7 @@ import EventsIconClicked from '../../assets/images/menu/home_clicked.svg';
 import LikesIconClicked from '../../assets/images/menu/like_clicked.svg';
 import ProfileIconClicked from '../../assets/images/menu/profile_clicked.svg';
 import TicketsIconClicked from '../../assets/images/menu/ticket_clicked.svg';
+import Membership from 'src/screens/user/Membership';
 
 
 
@@ -54,23 +55,24 @@ function EventStack() {
       <Stack.Screen name="Likes" component={Likes}/>
       <Stack.Screen name="Tervetuloa" component={Tervetuloa}/>
       <Stack.Screen name="Language" component={Language}/>
+      <Stack.Screen name="Membership" component={Membership}/>
     </Stack.Navigator>
   );
 }
 
-function AuthStack() {
-  return (
-    <Stack.Navigator initialRouteName="Language">
-      <Stack.Screen name="Language" component={Language} options={{ headerShown: false }}/>
-      <Stack.Screen name="Tervetuloa" component={Tervetuloa} options={{ headerShown: false }}/>
-      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
-      <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
-      <Stack.Screen name="Events" component={Events} options={{ headerShown: false }}/>
-      <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
-      <Stack.Screen name="Organizer"/>
-    </Stack.Navigator>
-  );
-}
+// function AuthStack() {
+//   return (
+//     <Stack.Navigator initialRouteName="Language">
+//       <Stack.Screen name="Language" component={Language} options={{ headerShown: false }}/>
+//       <Stack.Screen name="Tervetuloa" component={Tervetuloa} options={{ headerShown: false }}/>
+//       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
+//       <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
+//       <Stack.Screen name="Events" component={Events} options={{ headerShown: false }}/>
+//       <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }}/>
+//       <Stack.Screen name="Organizer"/>
+//     </Stack.Navigator>
+//   );
+// }
 
 // function AuthStack() {
 //   return (
@@ -146,8 +148,6 @@ export default function AppNavigator() {
       <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }} />
       <Tab.Screen name={t('profile')} component={Profile} options={{ headerShown: false }} />
     </Tab.Navigator>
-
-
   )
 
   // return isLoggedIn ? (
