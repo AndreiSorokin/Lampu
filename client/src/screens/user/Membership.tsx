@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, ScrollView  } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity  } from 'react-native'
 import { useTranslation } from 'react-i18next';
 
 import CustomButton from 'src/components/CustomButton';
@@ -9,7 +9,8 @@ import DocIcon from '../../../assets/images/membership/doc.svg';
 import SearchIcon from '../../../assets/images/membership/search.svg';
 import HeadIcon from '../../../assets/images/membership/head.svg';
 
-const Membership = () => {
+
+const Membership: React.FC<Props> = ({ navigation }) => {
    const { t } = useTranslation();
 
    const formatDate = (date) => {
@@ -26,7 +27,9 @@ const Membership = () => {
       <ScrollView contentContainerStyle={{ marginTop: 100, padding: 20, alignItems: 'center' }}>
          {/* Header Section */}
          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, alignSelf: 'flex-start' }}>
-           <Arrow width={36} height={36} />
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+               <Arrow width={36} height={36} />
+            </TouchableOpacity>
            <Text style={{ fontWeight: 'bold', fontSize: 36, marginLeft: 10 }}>{t('membership')}</Text>
          </View>
 

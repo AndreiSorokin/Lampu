@@ -44,6 +44,15 @@ export type RootStackParamList = {
 const Tab = createBottomTabNavigator<RootStackParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
 
+export default function ProfileStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="ProfileMain" component={Profile} />
+      <Stack.Screen name="Membership" component={Membership} />
+    </Stack.Navigator>
+  );
+}
+
 function EventStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -146,7 +155,7 @@ export default function AppNavigator() {
       <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
       <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
       <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }} />
-      <Tab.Screen name={t('profile')} component={Profile} options={{ headerShown: false }} />
+      <Tab.Screen name={t('profile')} component={ProfileStack} options={{ headerShown: false }} />
     </Tab.Navigator>
   )
 
