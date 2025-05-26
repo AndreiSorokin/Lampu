@@ -78,10 +78,10 @@ const UpdateUserInfo: React.FC<Props> = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Arrow width={36} height={36} />
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Arrow width={36} height={36} style={{ left: -130, margin: 10 }} />
         </TouchableOpacity>
+      <View style={styles.header}>
         <Text style={styles.title}>{t('edit')}</Text>
       </View>
 
@@ -94,28 +94,31 @@ const UpdateUserInfo: React.FC<Props> = ({ navigation }) => {
         {({ handleChange, handleSubmit, values, errors, touched, isSubmitting, setFieldValue }) => (
           <View>
             <Input
-              placeholder={t('firstName')}
+              placeholder={t('name')}
               value={values.name}
               onChangeText={handleChange('name')}
               editable={!isSubmitting}
+              style={styles.input}
             />
             {touched.name && errors.name && <Text style={styles.error}>{errors.name}</Text>}
 
             <Input
-              placeholder={t('instagram')}
+              placeholder='Instagram'
               value={values.instagram}
               onChangeText={handleChange('instagram')}
               editable={!isSubmitting}
+              style={styles.input}
             />
             {touched.instagram && errors.instagram && (
               <Text style={styles.error}>{errors.instagram}</Text>
             )}
 
             <Input
-              placeholder={t('telegram')}
+              placeholder='telegram'
               value={values.telegram}
               onChangeText={handleChange('telegram')}
               editable={!isSubmitting}
+              style={styles.input}
             />
             {touched.telegram && errors.telegram && (
               <Text style={styles.error}>{errors.telegram}</Text>
@@ -142,7 +145,7 @@ const UpdateUserInfo: React.FC<Props> = ({ navigation }) => {
               title={isSubmitting ? t('updating') : t('save')}
               onPress={() => handleSubmit()}
               disabled={isSubmitting}
-              style={{ marginTop: 20 }}
+              style={{ marginTop: 20, alignItems: 'center', justifyContent: 'center' }}
             />
           </View>
         )}
@@ -152,11 +155,11 @@ const UpdateUserInfo: React.FC<Props> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  container: { padding: 20, marginTop: 60, alignItems: 'center', justifyContent: 'center' },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20, left: -80 },
   title: { fontSize: 32, fontWeight: 'bold' },
   error: { color: 'red', marginBottom: 10 },
-  input: { borderWidth: 1, padding: 12, borderRadius: 6, marginBottom: 10 },
+  input: { borderWidth: 1, padding: 12, borderRadius: 50, marginBottom: 10, borderColor: '#FF9A42', backgroundColor: '#fff' },
 });
 
 export default UpdateUserInfo;

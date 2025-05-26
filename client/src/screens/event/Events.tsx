@@ -63,11 +63,11 @@ const Events: React.FC<Props> = ({ navigation }) => {
           gap: 10,
           marginTop: 10,
         }}>
-          <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.instagram.com/lampu.fi/')}>
             <InstagramIcon width={60} height={60} style={{ marginRight: -10 }}/>
           </TouchableOpacity>
       
-          <TouchableOpacity onPress={() => Linking.openURL('https://t.me')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://t.me/lampueventshki')}>
             <TelegramIcon width={36} height={36} />
           </TouchableOpacity>
       
@@ -75,7 +75,7 @@ const Events: React.FC<Props> = ({ navigation }) => {
             <TikTokIcon width={36} height={36} />
           </TouchableOpacity>
       
-          <TouchableOpacity onPress={() => Linking.openURL('https://www.linkedin.com')}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.linkedin.com/company/lampuevents/')}>
             <LinkedInIcon width={36} height={36} />
           </TouchableOpacity>
         </View>

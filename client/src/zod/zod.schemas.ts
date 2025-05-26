@@ -19,12 +19,15 @@ export const registerSchema = z.object({
 });
 
 export const updateUserSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  instagram: z.string().optional(),
-  telegram: z.string().optional(),
-  dateOfBirth: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: 'Invalid date',
-  }),
+   name: z.string().min(1, 'Name is required').optional(),
+   instagram: z.string().optional(),
+   telegram: z.string().optional(),
+   dateOfBirth: z
+      .string()
+      .refine((val) => !val || !isNaN(Date.parse(val)), {
+         message: 'Invalid date',
+      })
+      .optional(),
 });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;

@@ -101,7 +101,7 @@ const Register = ({ navigation }: { navigation: RegisterScreenNavigationProp }) 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>{t('register')}</Text>
       <Formik
         initialValues={initialValues}
         validationSchema={toFormikValidationSchema(registerSchema)}

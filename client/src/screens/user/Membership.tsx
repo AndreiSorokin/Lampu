@@ -96,7 +96,7 @@ const Membership: React.FC<Props> = ({ navigation }) => {
          {/* Logout Button */}
          <CustomButton
            title={t('logout')}
-           // onPress={}
+           onPress={() => navigation.navigate("")}
            style={{
                justifyContent: 'center',
                alignItems: 'center',
