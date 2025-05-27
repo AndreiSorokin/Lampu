@@ -1,6 +1,7 @@
 {
    "welcome": "Welcome!",
    "login": "Login",
+   "or": "Sign In or Sign Up",
    "register": "Register",
    "email": "Email",
    "password": "Password",

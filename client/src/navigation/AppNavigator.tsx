@@ -123,44 +123,51 @@ export default function AppNavigator() {
     );
   }
 
-  return  (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          switch (route.name) {
-            case 'Events':
-              return focused
-                ? <EventsIconClicked width={24} height={24} />
-                : <EventsIcon width={24} height={24} />;
-            case t('likes'):
-              return focused
-                ? <LikesIconClicked width={24} height={24} />
-                : <LikesIcon width={24} height={24} />;
-            case t('tickets'):
-              return focused
-                ? <TicketsIconClicked width={24} height={24} />
-                : <TicketsIcon width={24} height={24} fill="#FF9A42"/>;
-            case t('profile'):
-              return focused
-                ? <ProfileIconClicked width={24} height={24} />
-                : <ProfileIcon width={24} height={24} />;
-          }
-        },
-        tabBarLabelPosition: 'below-icon',
-        tabBarActiveTintColor: '#000',
-        tabBarInactiveTintColor: '#000',
-        tabBarStyle: {
-          backgroundColor: '#FF9A42',
-          borderTopWidth: 0,
-        },
-      })}
-    >   
-      <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
-      <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
-      <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }} />
-      <Tab.Screen name={t('profile')} component={ProfileStack} options={{ headerShown: false }} />
-    </Tab.Navigator>
-  )
+  return (
+    <Stack.Navigator initialRouteName="Language">
+      {/* <Stack.Screen name="Language" component={Language} options={{ headerShown: false }} /> */}
+      <Stack.Screen name="Tervetuloa" component={Tervetuloa}  options={{ headerShown: false }}/>
+    </Stack.Navigator>
+  );
+
+  // return  (
+  //   <Tab.Navigator
+  //     screenOptions={({ route }) => ({
+  //       tabBarIcon: ({ focused, color, size }) => {
+  //         switch (route.name) {
+  //           case 'Events':
+  //             return focused
+  //               ? <EventsIconClicked width={24} height={24} />
+  //               : <EventsIcon width={24} height={24} />;
+  //           case t('likes'):
+  //             return focused
+  //               ? <LikesIconClicked width={24} height={24} />
+  //               : <LikesIcon width={24} height={24} />;
+  //           case t('tickets'):
+  //             return focused
+  //               ? <TicketsIconClicked width={24} height={24} />
+  //               : <TicketsIcon width={24} height={24} fill="#FF9A42"/>;
+  //           case t('profile'):
+  //             return focused
+  //               ? <ProfileIconClicked width={24} height={24} />
+  //               : <ProfileIcon width={24} height={24} />;
+  //         }
+  //       },
+  //       tabBarLabelPosition: 'below-icon',
+  //       tabBarActiveTintColor: '#000',
+  //       tabBarInactiveTintColor: '#000',
+  //       tabBarStyle: {
+  //         backgroundColor: '#FF9A42',
+  //         borderTopWidth: 0,
+  //       },
+  //     })}
+  //   >   
+  //     <Tab.Screen name="Events" component={EventStack} options={{ headerShown: false }} />
+  //     <Tab.Screen name={t('likes')} component={Likes} options={{ headerShown: false }} />
+  //     <Tab.Screen name={t('tickets')} component={Enrollments} options={{ headerShown: false }} />
+  //     <Tab.Screen name={t('profile')} component={ProfileStack} options={{ headerShown: false }} />
+  //   </Tab.Navigator>
+  // )
 
   // return isLoggedIn ? (
   //   <Tab.Navigator >
@@ -173,25 +180,3 @@ export default function AppNavigator() {
   //   <AuthStack />
   // );
 }
-
-// import { createStackNavigator } from '@react-navigation/stack';
-// import { View, Text } from 'react-native';
-// import React from 'react';
-
-// const Stack = createStackNavigator();
-
-// function DummyScreen() {
-//   return (
-//     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-//       <Text>Hello World</Text>
-//     </View>
-//   );
-// }
-
-// export default function AppNavigator() {
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen name="Home" component={DummyScreen} />
-//     </Stack.Navigator>
-//   );
-// }

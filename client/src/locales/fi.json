@@ -1,6 +1,7 @@
 {
    "welcome": "Tervetuloa!",
    "login": "Kirjaudu sisään",
+   "or": "Kirjaudu sisään tai luo tili",
    "register": "Juo tiili",
    "email": "Sähköposti",
    "password": "Salasana",
